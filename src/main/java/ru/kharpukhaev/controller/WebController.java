@@ -3,17 +3,14 @@ package ru.kharpukhaev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.TransferRepository;
-import ru.kharpukhaev.service.Commissions;
-import ru.kharpukhaev.service.Transfer;
+import ru.kharpukhaev.services.Transfer;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Controller
@@ -35,7 +32,7 @@ public class WebController {
         return "auth";
     }
 
-    @PostMapping
+    @GetMapping("logging")
     public String auth(@RequestParam String login, @RequestParam String password, Model model) {
         Client client = clientRepository.findByLogin(login);
         if (client.getPassword().equals(password)) {
@@ -64,7 +61,7 @@ public class WebController {
     }
 
     @PostMapping("/card_transfer")
-    public String cardTransfer(@RequestParam long clientId, Model model) {
+    public String cardTransfer(@ModelAttribute("transfer") @Valid TransferEntity transferEntity, @RequestParam long clientId, Model model) {
         model.addAttribute("clientId", clientId);
         return "card_transfer";
     }
@@ -74,14 +71,8 @@ public class WebController {
         Client sender = clientRepository.findFirstById(senderId);
         Client recipient = clientRepository.findByCardNumber(recipientId);
         if (recipient != null) {
-            Map<String, Client> map = null;
             try {
-                map = transfer.doTransfer(sender, recipient, sum);
-                sender = map.get("sender");
-                recipient = map.get("recipient");
-                transferRepository.save(new TransferEntity(sender, recipientId, sum));
-                clientRepository.save(recipient);
-                clientRepository.save(sender);
+                transfer.doTransfer(sender, recipient, sum);
             } catch (Exception e) {
                 return "404";
             }

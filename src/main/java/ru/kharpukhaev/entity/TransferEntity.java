@@ -1,5 +1,7 @@
 package ru.kharpukhaev.entity;
 
+import ru.kharpukhaev.entity.enums.TransferStatus;
+
 import javax.persistence.*;
 
 @Entity
@@ -17,12 +19,16 @@ public class TransferEntity {
     private String accountNumber;
     @Column(name = "transfer_sum")
     private long transferSum;
+
+    @Enumerated(EnumType.STRING)
+    private TransferStatus status;
     public TransferEntity() {
     }
     public TransferEntity(Client sender, String accountNumber, long transferSum) {
         this.sender = sender;
         this.accountNumber = accountNumber;
         this.transferSum = transferSum;
+        this.status = TransferStatus.PROCESSED;
     }
     public Client getSender() {
         return sender;
@@ -45,6 +51,19 @@ public class TransferEntity {
     public Long getId() {
         return id;
     }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public TransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransferStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Sender=" + sender +

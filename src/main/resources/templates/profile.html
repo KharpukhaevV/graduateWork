@@ -33,20 +33,25 @@
     <hr>
     <div class="row align-items-start justify-content-start" style="margin-top: 50px">
         <div class="col-5 align-self-start">
+            <div th:if="${not #lists.isEmpty(transfers)}">
             <h4>История переводов</h4>
-            <div>
                 <table class="table">
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Получатель</th>
                         <th scope="col">Сумма</th>
+                        <th scope="col">Статус</th>
                     </tr>
                     <tr th:each="transferEntity, iter : ${transfers}">
                         <td th:text="${iter.index + 1}"></td>
                         <td th:text="${transferEntity.getAccountNumber()}"></td>
                         <td th:text="${transferEntity.getTransferSum()}"></td>
+                        <td th:text="${transferEntity.getStatus()}"></td>
                     </tr>
                 </table>
+            </div>
+            <div th:if="${#lists.isEmpty(transfers)}">
+                <h5>Переводы не обнаружены</h5>
             </div>
         </div>
     </div>

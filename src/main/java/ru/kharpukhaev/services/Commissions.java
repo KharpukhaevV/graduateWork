@@ -1,4 +1,4 @@
-package ru.kharpukhaev.service;
+package ru.kharpukhaev.services;
 
 import org.springframework.stereotype.Component;
 
