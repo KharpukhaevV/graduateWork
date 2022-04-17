@@ -19,11 +19,11 @@
         <div class="col-7 align-self-center">
             <div class="col align-self-end" style="margin-bottom: 10px">
                 <form method="POST" action="/account_transfer">
-                        <input type="hidden" name="clientId"th:value="${client}">
+<!--                        <input type="hidden" name="clientId"th:value="${client}">-->
                     <button type="submit" class="btn btn-info">Перевод по номеру счета</button>
                 </form>
-                <form method="POST" action="/card_transfer" style="margin-top: 10px">
-                    <input type="hidden" name="clientId" th:value="${client.getId()}">
+                <form method="GET" th:action="@{/{login}/card_transfer(login=${client.getLogin()})}" style="margin-top: 10px">
+<!--                    <input type="hidden" name="clientId" th:value="${client.getId()}">-->
                     <button type="submit" class="btn btn-info">Перевод по номеру карты</button>
                 </form>
             </div>

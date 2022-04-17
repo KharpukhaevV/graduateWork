@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.exceptions.InsufficientFunds;
+import ru.kharpukhaev.exceptions.RecipientNotFound;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 import ru.kharpukhaev.services.Transfer;
@@ -76,33 +77,36 @@ public class WebController {
         return "index";
     }
 
-    @PostMapping("/card_transfer")
-    public String cardTransfer(@ModelAttribute("transferEntity") TransferEntity transferEntity, @RequestParam long clientId, Model model) {
-        model.addAttribute("client", clientRepository.findFirstById(clientId));
+    @GetMapping("/{login}/card_transfer")
+    public String cardTransfer(@ModelAttribute("transferEntity") TransferEntity transferEntity, @PathVariable("login") String login, Model model) {
+        model.addAttribute("client", clientRepository.findByLogin(login));
         model.addAttribute("errors", new ArrayList<>());
         return "card_transfer";
     }
 
-    @PostMapping("/transfer")
-    public String transfer(@ModelAttribute("transferEntity") @Valid TransferEntity transferEntity, BindingResult bindingResult) throws InsufficientFunds {
+    @PostMapping("/{login}/transfer")
+    public String transfer(@ModelAttribute("transferEntity") @Valid TransferEntity transferEntity, BindingResult bindingResult, @PathVariable("login") String login) throws InsufficientFunds {
+        Client sender = clientRepository.findByLogin(login);
         if (bindingResult.hasErrors()) {
-            return "card_transfer";
+            return "redirect:/" + login + "/card_transfer";
         }
-        Client recipient = clientRepository.findByCardNumber(transferEntity.getAccountNumber());
-        if (recipient != null) {
-            transfer.doTransfer(transferEntity.getSender(), recipient, transferEntity.getTransferSum());
-        }
-        return "redirect:/" + transferEntity.getSender().getLogin();
+        transfer.doTransfer(sender, transferEntity.getAccountNumber(), transferEntity.getTransferSum());
+        return "redirect:/" + login;
     }
 
     @ExceptionHandler(InsufficientFunds.class)
     public String handleInsufficientFunds(InsufficientFunds e, Model model) {
-        model.addAttribute("errors", new ArrayList<String>().add(e.getMessage()));
-        return "card_transfer";
+        model.addAttribute("errors", e.getMessage());
+        return "123123";
+//        return "/" + e.getSender().getLogin() + "/card_transfer";
     }
 
-            /*
-                TODO
+    @ExceptionHandler(RecipientNotFound.class)
+    public String handleRecipientNotFound(RecipientNotFound e, Model model) {
+        return "";
+    }
+
+            /* TODO
                 Обработка исключений
                 новые сущности карт и счетов
                 переводы на картах и счетах

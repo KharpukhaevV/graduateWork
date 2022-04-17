@@ -9,7 +9,7 @@
 <div class="container">
     <div class="row align-items-center justify-content-center" style="margin-top: 10px">
         <div class="col align-self-start">
-            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer" th:object="${transferEntity}">
+            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" th:action="@{/{login}/transfer(login=${client.getLogin()})}" th:object="${transferEntity}">
                 <h2>Перевод по номеру карты</h2>
                 <div class="col-3">
                     <label for="recipientId">Номер карты</label>
@@ -21,7 +21,6 @@
                     <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}" th:errors="*{transferSum}"></label>
                     <input type="text" class="form-control" th:field="*{transferSum}" id="sum" >
                 </div>
-                <input type="hidden" name="senderId" th:value="${client}" th:field="*{sender}">
                 <button type="submit" class="btn btn-primary" style="margin: 10px">Submit</button>
             </form>
         </div>

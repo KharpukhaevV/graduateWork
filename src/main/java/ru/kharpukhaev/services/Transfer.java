@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.exceptions.InsufficientFunds;
+import ru.kharpukhaev.exceptions.RecipientNotFound;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 
@@ -25,17 +26,22 @@ public class Transfer {
         this.clientRepository = clientRepository;
     }
 
-    public void doTransfer(Client sender, Client recipient, long sum) throws InsufficientFunds {
-        long newSum = commissions.checkCommission(sender, recipient, sum);
-        if (newSum <= sender.getBalance()) {
-            sender.setBalance(sender.getBalance() - newSum);
-            clientRepository.save(sender);
-            TransferEntity transferEntity = new TransferEntity(sender, recipient.getAccountNumber(), sum);
-            if (frodMonitor.monitor(transferEntity)) {
-                recipient.setBalance(recipient.getBalance() + sum);
+    public void doTransfer(Client sender, String recipientAccountNumber, long sum) throws InsufficientFunds {
+        Client recipient = clientRepository.findByCardNumber(recipientAccountNumber);
+        if (recipient != null) {
+            long newSum = commissions.checkCommission(sender, recipient, sum);
+            if (newSum <= sender.getBalance()) {
+                sender.setBalance(sender.getBalance() - newSum);
+                clientRepository.save(sender);
+                TransferEntity transferEntity = new TransferEntity(sender, recipient.getAccountNumber(), sum);
+                if (frodMonitor.monitor(transferEntity)) {
+                    recipient.setBalance(recipient.getBalance() + sum);
+                }
+            } else {
+                throw new InsufficientFunds("Недостаточно средств.", sender);
             }
         } else {
-            throw new InsufficientFunds("Недостаточно средств.");
+            throw new RecipientNotFound("Получатель с таким номером не найден");
         }
     }
 }
