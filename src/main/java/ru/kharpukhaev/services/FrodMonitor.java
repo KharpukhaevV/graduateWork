@@ -17,12 +17,11 @@ public class FrodMonitor {
     }
 
     public boolean monitor(TransferEntity transfer){
-        if ((transfer.getTransferSum() / 2) == 0) {
+        if ((transfer.getTransferSum() % 2) == 0) {
             transfer.setStatus(TransferStatus.SUCCESS);
             transferRepository.save(transfer);
             return true;
         } else {
-            transfer.setStatus(TransferStatus.BLOCKED);
             transferRepository.save(transfer);
             return false;
         }

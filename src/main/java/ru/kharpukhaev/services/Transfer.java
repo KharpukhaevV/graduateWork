@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
+import ru.kharpukhaev.exceptions.InsufficientFunds;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 
@@ -24,26 +25,17 @@ public class Transfer {
         this.clientRepository = clientRepository;
     }
 
-    public void doTransfer(Client sender, Client recipient, long sum) throws Exception {
-        if (!commissions.checkCommission(sender.getCardNumber(), recipient.getCardNumber())) {
-            long newSum = (long) (sum + commissions.calcCommission(sum));
-            if (newSum <= sender.getBalance()) {
-                sender.setBalance(sender.getBalance() - newSum);
-                clientRepository.save(sender);
-                TransferEntity transferEntity = new TransferEntity(sender, recipient.getAccountNumber(), sum);
-                if (frodMonitor.monitor(transferEntity)) {
-                    recipient.setBalance(recipient.getBalance() + sum);
-                }
-            } else {
-                throw new Exception();
+    public void doTransfer(Client sender, Client recipient, long sum) throws InsufficientFunds {
+        long newSum = commissions.checkCommission(sender, recipient, sum);
+        if (newSum <= sender.getBalance()) {
+            sender.setBalance(sender.getBalance() - newSum);
+            clientRepository.save(sender);
+            TransferEntity transferEntity = new TransferEntity(sender, recipient.getAccountNumber(), sum);
+            if (frodMonitor.monitor(transferEntity)) {
+                recipient.setBalance(recipient.getBalance() + sum);
             }
         } else {
-            if (sum <= sender.getBalance()) {
-                sender.setBalance(sender.getBalance() - sum);
-                recipient.setBalance(recipient.getBalance() + sum);
-            } else {
-                throw new Exception();
-            }
+            throw new InsufficientFunds("Недостаточно средств.");
         }
     }
 }

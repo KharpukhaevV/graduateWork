@@ -1,6 +1,7 @@
 package ru.kharpukhaev.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Entity
@@ -14,9 +15,11 @@ public class Client implements Serializable {
     private Long id;
 
     @Column(name = "login")
+    @NotEmpty
     private String login;
 
     @Column(name = "password")
+    @NotEmpty
     private String password;
 
     @Column(name = "firstname")

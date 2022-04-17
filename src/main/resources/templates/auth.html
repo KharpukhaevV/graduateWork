@@ -9,13 +9,15 @@
 <div class="container">
     <div class="row align-items-center justify-content-center" style="margin-top: 50px">
         <div class="col-3 align-self-center">
-            <form method="GET" action="logging">
+            <form method="POST" th:action="@{/log}" th:object="${client}">
                 <h2>Please sign in</h2>
                 <div class="mb-3">
-                    <input type="text" class="form-control" name="login" id="login" aria-describedby="emailHelp" placeholder="Username">
+                    <label for="login" style="color: red;" th:if="${#fields.hasErrors('login')}" th:errors="*{login}"></label>
+                    <input type="text" class="form-control" th:field="*{login}" id="login" aria-describedby="emailHelp" placeholder="Username">
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                    <label for="password" style="color: red;" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></label>
+                    <input type="password" class="form-control" th:field="*{password}" id="password" placeholder="Password">
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

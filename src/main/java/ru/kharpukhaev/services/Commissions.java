@@ -1,15 +1,20 @@
 package ru.kharpukhaev.services;
 
 import org.springframework.stereotype.Component;
+import ru.kharpukhaev.entity.Client;
 
 @Component
 public class Commissions {
 
-    public boolean checkCommission(String cardSender, String cardRecipient) {
-        return cardSender.substring(0, 5).equals(cardRecipient.substring(0, 5));
+    public long checkCommission(Client sender, Client recipient, long sum) {
+        if (sender.getCardNumber().substring(0, 5).equals(recipient.getCardNumber().substring(0, 5))) {
+            return sum;
+        } else {
+            return calcCommission(sum);
+        }
     }
 
-    public double calcCommission(long sum) {
-        return sum * 0.1;
+    public long calcCommission(long sum) {
+        return (long) (sum * 0.1);
     }
 }
