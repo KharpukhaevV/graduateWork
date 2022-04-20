@@ -7,6 +7,9 @@
 </head>
 <body>
 <div class="container">
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
     <div class="row align-items-start justify-content-start" style="margin-top: 50px">
         <div class="col-5 align-self-start">
             <h4 th:text="'Добро пожаловать ' + ${client.toString()}"></h4>
