@@ -1,8 +1,13 @@
 package ru.kharpukhaev.entity;
 
+import ru.kharpukhaev.entity.enums.Role;
+
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "clients")
@@ -14,22 +19,29 @@ public class Client implements Serializable {
     @Column(name = "client_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "login")
+    @Column(name = "username")
     @NotEmpty
-    private String login;
+    @Size(min = 2, max = 16)
+    private String username;
 
     @Column(name = "password")
     @NotEmpty
+    @Size(min = 4, max = 16)
     private String password;
 
     @Column(name = "firstname")
+    @NotEmpty
+    @Size(min = 2, max = 16)
     private String firstname;
 
     @Column(name = "lastname")
+    @NotEmpty
+    @Size(min = 2, max = 16)
     private String lastname;
 
-    @Column(name = "card_number")
-    private String cardNumber;
+    @Column(name = "cards")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "client")
+    private Set<Card> cards;
 
     @Column(name = "account_number")
     private String accountNumber;
@@ -37,29 +49,24 @@ public class Client implements Serializable {
     @Column(name = "balance")
     private long balance;
 
-    public Client() {
-    }
+    private boolean active;
 
-    public Client(String login, String password, String firstname, String lastname, String cardNumber, String accountNumber, long balance) {
-        this.login = login;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.cardNumber = cardNumber;
-        this.accountNumber = accountNumber;
-        this.balance = balance;
-    }
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn (name = "client_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles;
+
 
     public Long getId() {
         return id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String login) {
+        this.username = login;
     }
 
     public String getPassword() {
@@ -86,12 +93,12 @@ public class Client implements Serializable {
         this.lastname = lastname;
     }
 
-    public String getCardNumber() {
-        return cardNumber;
+    public Set<Card> getCards() {
+        return cards;
     }
 
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
+    public void setCards(Set<Card> card) {
+        this.cards = card;
     }
 
     public String getAccountNumber() {
@@ -109,6 +116,23 @@ public class Client implements Serializable {
     public void setBalance(long balance) {
         this.balance = balance;
     }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 
     @Override
     public String toString() {

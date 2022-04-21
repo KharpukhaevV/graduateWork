@@ -7,16 +7,22 @@
 </head>
 <body>
 <div class="container">
-    <div class="row align-items-center justify-content-center" style="margin-top: 10px">
-        <div class="col align-self-start">
-            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" th:action="@{/{login}/transfer(login=${client.getLogin()})}" th:object="${transferEntity}">
-                <h2>Перевод по номеру карты</h2>
-                <div class="col-3">
+    <div class="row align-items-center justify-content-center" style="margin-top: 10px; text-align: center">
+        <div class="col-3 align-self-start">
+            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/to_client" th:object="${transferEntity}">
+                <h3>Перевод клиенту банка</h3>
+                <div th:each="card : ${client.getCards()}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="card1" th:field="*{sender}" th:value="${card}">
+                        <label class="form-check-label" for="card1" th:text="${card.getNumber()}">number</label>
+                    </div>
+                </div>
+                <div>
                     <label for="recipientId">Номер карты</label>
                     <label for="recipientId" style="color: red;" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></label>
                     <input type="text" class="form-control" th:field="*{accountNumber}" id="recipientId">
                 </div>
-                <div class="col-3">
+                <div>
                     <label for="sum">Сумма перевода</label>
                     <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}" th:errors="*{transferSum}"></label>
                     <input type="text" class="form-control" th:field="*{transferSum}" id="sum" >

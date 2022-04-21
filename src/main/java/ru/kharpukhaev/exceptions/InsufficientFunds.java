@@ -1,15 +1,16 @@
 package ru.kharpukhaev.exceptions;
 
+import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
 
 public class InsufficientFunds extends RuntimeException {
-    private Client sender;
-    public InsufficientFunds(String message, Client sender) {
+    private Card sender;
+    public InsufficientFunds(String message, Card sender) {
         super(message);
         this.sender = sender;
     }
 
-    public Client getSender() {
+    public Card getSender() {
         return sender;
     }
 }

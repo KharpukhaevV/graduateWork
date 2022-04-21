@@ -16,7 +16,7 @@ public class TransferEntity {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sender_id", nullable = false)
-    private Client sender;
+    private Card sender;
     @Column(name = "account_number")
     @NotEmpty
     private String accountNumber;
@@ -28,16 +28,16 @@ public class TransferEntity {
 
     public TransferEntity() {
     }
-    public TransferEntity(Client sender, String accountNumber, long transferSum) {
+    public TransferEntity(Card sender, String accountNumber, long transferSum) {
         this.sender = sender;
         this.accountNumber = accountNumber;
         this.transferSum = transferSum;
         this.status = TransferStatus.PROCESSED;
     }
-    public Client getSender() {
+    public Card getSender() {
         return sender;
     }
-    public void setSender(Client sender) {
+    public void setSender(Card sender) {
         this.sender = sender;
     }
     public String getAccountNumber() {
