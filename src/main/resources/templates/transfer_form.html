@@ -8,26 +8,83 @@
 <body>
 <div class="container">
     <div class="row align-items-center justify-content-center" style="margin-top: 10px; text-align: center">
-        <div class="col-3 align-self-start">
-            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/to_client" th:object="${transferEntity}">
-                <h3>Перевод клиенту банка</h3>
+        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/to_client'}">
+            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/to_client">
+                <h3>Перевод клиенту нашего банка</h3>
+                <p>Выберете карту</p>
                 <div th:each="card : ${client.getCards()}">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" id="card1" th:field="*{sender}" th:value="${card}">
-                        <label class="form-check-label" for="card1" th:text="${card.getNumber()}">number</label>
+                        <input class="form-check-input" type="radio" id="card1" name="sender" th:value="${card.getId()}">
+                        <label class="form-check-label" for="card1" th:text="'Карта ' + ${card.getNumber()}">number</label>
+                        <label class="form-check-label" for="card1" th:text="'Баланс: ' + ${card.getBalance()}">number</label>
                     </div>
                 </div>
                 <div>
                     <label for="recipientId">Номер карты</label>
-                    <label for="recipientId" style="color: red;" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></label>
-                    <input type="text" class="form-control" th:field="*{accountNumber}" id="recipientId">
+                    <input type="text" class="form-control" name="recipient" id="recipientId">
                 </div>
                 <div>
                     <label for="sum">Сумма перевода</label>
-                    <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}" th:errors="*{transferSum}"></label>
-                    <input type="text" class="form-control" th:field="*{transferSum}" id="sum" >
+                    <input type="text" class="form-control" name="sum" id="sum" >
                 </div>
-                <button type="submit" class="btn btn-primary" style="margin: 10px">Submit</button>
+                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>
+            </form>
+            <form method="GET" action="/transfer" style="margin-top: 10px">
+                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
+            </form>
+        </div>
+        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/to_other'}">
+            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/to_other">
+                <h3>Перевод клиенту другого банка</h3>
+                <p>Выберете карту</p>
+                <div th:each="card : ${client.getCards()}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="card1" name="sender" th:value="${card.getId()}">
+                        <label class="form-check-label" for="card1" th:text="'Карта ' + ${card.getNumber()}">number</label>
+                        <label class="form-check-label" for="card1" th:text="'Баланс: ' + ${card.getBalance()}">number</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="recipientId">Номер карты</label>
+                    <input type="text" class="form-control" name="recipient" id="recipientId">
+                </div>
+                <div>
+                    <label for="sum">Сумма перевода</label>
+                    <input type="text" class="form-control" name="sum" id="sum" >
+                </div>
+                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>
+            </form>
+            <form method="GET" action="/transfer" style="margin-top: 10px">
+                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
+            </form>
+        </div>
+        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/between_their'}">
+            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/between_their">
+                <h3>Перевод между своими счетами</h3>
+                <p>Выберете карту</p>
+                <div th:each="card : ${client.getCards()}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="sender1" name="sender" th:value="${card.getId()}">
+                        <label class="form-check-label" for="sender1" th:text="'Карта ' + ${card.getNumber()}">number</label>
+                        <label class="form-check-label" for="sender1" th:text="'Баланс: ' + ${card.getBalance()}">number</label>
+                    </div>
+                </div>
+                <hr>
+                <div th:each="card : ${client.getCards()}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="recipient1" name="recipient" th:value="${card.getId()}">
+                        <label class="form-check-label" for="recipient1" th:text="'Карта ' + ${card.getNumber()}">number</label>
+                        <label class="form-check-label" for="recipient1" th:text="'Баланс: ' + ${card.getBalance()}">number</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="sum">Сумма перевода</label>
+                    <input type="text" class="form-control" name="sum" id="sum" >
+                </div>
+                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>
+            </form>
+            <form method="GET" action="/transfer" style="margin-top: 10px">
+                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
             </form>
         </div>
     </div>

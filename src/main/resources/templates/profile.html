@@ -68,14 +68,14 @@
                 <div th:if="${not #lists.isEmpty(transfers)}">
                     <table class="table">
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col">Дата</th>
                             <th scope="col">Получатель</th>
                             <th scope="col">Сумма</th>
                             <th scope="col">Статус</th>
                         </tr>
-                        <tr th:each="transferEntity, iter : ${transfers}">
-                            <td th:text="${iter.index + 1}"></td>
-                            <td th:text="${transferEntity.getAccountNumber()}"></td>
+                        <tr th:each="transferEntity : ${transfers}">
+                            <td th:text="${transferEntity.getDate()}"></td>
+                            <td th:text="${transferEntity.getRecipient()}"></td>
                             <td th:text="${transferEntity.getTransferSum()}"></td>
                             <td th:text="${transferEntity.getStatus()}"></td>
                         </tr>

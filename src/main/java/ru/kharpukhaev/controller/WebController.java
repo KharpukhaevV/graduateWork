@@ -30,6 +30,7 @@ public class WebController {
     private final TransferRepository transferRepository;
     private final CardRepository cardRepository;
     private final Transfer transfer;
+    private Client client;
 
     @Autowired
     public WebController(ClientRepository clientRepository, TransferRepository transferRepository, CardRepository cardRepository, Transfer transfer) {
@@ -40,7 +41,7 @@ public class WebController {
     }
 
     @GetMapping
-    public String index() {
+    public String index(Principal principal) {
         return "redirect:/profile";
     }
 
@@ -51,11 +52,8 @@ public class WebController {
 
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("client") @Valid Client client, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "registration";
-        }
         Client clientFromDB = clientRepository.findByUsername(client.getUsername());
-        if (clientFromDB != null) {
+        if (bindingResult.hasErrors() | clientFromDB != null) {
             return "registration";
         }
         client.setActive(true);
@@ -66,7 +64,7 @@ public class WebController {
 
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
-        Client client = clientRepository.findByUsername(principal.getName());
+        client = clientRepository.findByUsername(principal.getName());
         List<TransferEntity> transfers = transferRepository.findAllBySenderId(client.getId());
         Collections.reverse(transfers);
         model.addAttribute("client", client);
@@ -75,8 +73,7 @@ public class WebController {
     }
 
     @GetMapping("/add_card")
-    public String addCard(Principal principal) {
-        Client client = clientRepository.findByUsername(principal.getName());
+    public String addCard() {
         Card card = new Card();
         card.setType(CardType.DEBIT);
         card.setClient(client);
@@ -91,19 +88,39 @@ public class WebController {
     }
 
     @GetMapping("/transfer/to_client")
-    public String cardTransfer(@ModelAttribute("transferEntity") TransferEntity transferEntity, Model model, Principal principal) {
-        model.addAttribute("client", clientRepository.findByUsername(principal.getName()));
+    public String transferToClient(Model model) {
+        model.addAttribute("client", client);
         return "transfer_form";
     }
 
     @PostMapping("/transfer/to_client")
-    public String transfer(@ModelAttribute("transferEntity") @Valid TransferEntity transferEntity, BindingResult bindingResult, Principal principal) throws InsufficientFunds {
-//        if (bindingResult.hasErrors()) {
-//            return "transfer_form";
-//        }
-        System.out.println(transferEntity.getSender());
-        transfer.doTransferToOurBank(transferEntity.getSender(), transferEntity.getAccountNumber(), transferEntity.getTransferSum());
-        return "profile";
+    public String doTransferToClient(@RequestParam Card sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
+        transfer.transferToClient(sender, recipient, sum);
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/transfer/to_other")
+    public String transferToOther(Model model) {
+        model.addAttribute("client", client);
+        return "transfer_form";
+    }
+
+    @PostMapping("/transfer/to_other")
+    public String doTransferToOther(@RequestParam Card sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
+        transfer.transferToOther(sender, recipient, sum);
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/transfer/between_their")
+    public String transferBetweenTheir(Model model) {
+        model.addAttribute("client", client);
+        return "transfer_form";
+    }
+
+    @PostMapping("/transfer/between_their")
+    public String doTransferBetweenTheir(@RequestParam Card sender, @RequestParam Card recipient, @RequestParam long sum) throws InsufficientFunds {
+        transfer.transferBetweenTheir(sender, recipient, sum);
+        return "redirect:/profile";
     }
 
     @ExceptionHandler(InsufficientFunds.class)

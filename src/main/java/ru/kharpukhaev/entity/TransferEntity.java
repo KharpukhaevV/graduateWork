@@ -3,8 +3,8 @@ package ru.kharpukhaev.entity;
 import ru.kharpukhaev.entity.enums.TransferStatus;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Entity
 @Table(name = "transfers")
@@ -14,61 +14,107 @@ public class TransferEntity {
     @Basic(optional = false)
     @Column(name = "transfer_id", unique = true, nullable = false)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sender_card_id", nullable = false)
+    private Card cardSender;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "recipient_card_id", nullable = false)
+    private Card cardRecipient;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sender_id", nullable = false)
-    private Card sender;
-    @Column(name = "account_number")
-    @NotEmpty
-    private String accountNumber;
-    @Column(name = "transfer_sum")
-    @Min(0)
+    private Client sender;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "recipient_id", nullable = false)
+    private Client recipient;
+
     private long transferSum;
+
+    private String date;
     @Enumerated(EnumType.STRING)
     private TransferStatus status;
 
     public TransferEntity() {
     }
-    public TransferEntity(Card sender, String accountNumber, long transferSum) {
-        this.sender = sender;
-        this.accountNumber = accountNumber;
+
+    public TransferEntity(Card cardSender, Card cardRecipient, long transferSum) {
+        this.cardSender = cardSender;
+        this.cardRecipient = cardRecipient;
         this.transferSum = transferSum;
         this.status = TransferStatus.PROCESSED;
+        this.sender = cardSender.getClient();
+        this.recipient = cardRecipient.getClient();
+        this.date = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
+
     }
-    public Card getSender() {
-        return sender;
+
+    public Card getCardSender() {
+        return cardSender;
     }
-    public void setSender(Card sender) {
-        this.sender = sender;
+
+    public void setCardSender(Card sender) {
+        this.cardSender = sender;
     }
-    public String getAccountNumber() {
-        return accountNumber;
+
+    public Card getCardRecipient() {
+        return cardRecipient;
     }
-    public void setRecipient(String recipient) {
-        this.accountNumber = recipient;
+
+    public void setCardRecipient(Card recipient) {
+        this.cardRecipient = recipient;
     }
+
     public long getTransferSum() {
         return transferSum;
     }
+
     public void setTransferSum(long transferSum) {
         this.transferSum = transferSum;
     }
+
     public Long getId() {
         return id;
     }
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
+
     public TransferStatus getStatus() {
         return status;
     }
+
     public void setStatus(TransferStatus status) {
         this.status = status;
     }
 
+    public Client getSender() {
+        return sender;
+    }
+
+    public void setSender(Client sender) {
+        this.sender = sender;
+    }
+
+    public Client getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(Client recipient) {
+        this.recipient = recipient;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     @Override
     public String toString() {
-        return "Sender=" + sender +
-                ", AccountNumber=" + accountNumber +
+        return "Sender=" + cardSender +
+                ", AccountNumber=" + cardRecipient +
                 ", TransferSum=" + transferSum;
     }
 }

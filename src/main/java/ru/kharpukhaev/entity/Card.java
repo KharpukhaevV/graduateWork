@@ -13,7 +13,6 @@ public class Card {
     @Column(name = "card_id", unique = true, nullable = false)
     private Long id;
 
-
     private String number;
 
     @Enumerated(EnumType.STRING)
