@@ -45,6 +45,7 @@ public class Transfer {
         } else {
             throw new RecipientNotFound("Получатель с таким номером карты не найден");
         }
+
     }
 
     public void transferToClient(Card cardSender, String recipientCardNumber, long sum) {

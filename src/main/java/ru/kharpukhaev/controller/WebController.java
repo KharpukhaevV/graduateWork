@@ -7,13 +7,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
+import ru.kharpukhaev.entity.Credit;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.CardType;
+import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.entity.enums.Role;
 import ru.kharpukhaev.exceptions.InsufficientFunds;
 import ru.kharpukhaev.exceptions.RecipientNotFound;
 import ru.kharpukhaev.repository.CardRepository;
 import ru.kharpukhaev.repository.ClientRepository;
+import ru.kharpukhaev.repository.CreditRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 import ru.kharpukhaev.services.Transfer;
 
@@ -29,19 +32,26 @@ public class WebController {
     private final ClientRepository clientRepository;
     private final TransferRepository transferRepository;
     private final CardRepository cardRepository;
+    private final CreditRepository creditRepository;
     private final Transfer transfer;
+
     private Client client;
 
     @Autowired
-    public WebController(ClientRepository clientRepository, TransferRepository transferRepository, CardRepository cardRepository, Transfer transfer) {
+    public WebController(ClientRepository clientRepository,
+                         TransferRepository transferRepository,
+                         CardRepository cardRepository,
+                         CreditRepository creditRepository,
+                         Transfer transfer) {
         this.clientRepository = clientRepository;
         this.transferRepository = transferRepository;
         this.cardRepository = cardRepository;
+        this.creditRepository = creditRepository;
         this.transfer = transfer;
     }
 
     @GetMapping
-    public String index(Principal principal) {
+    public String index() {
         return "redirect:/profile";
     }
 
@@ -65,10 +75,7 @@ public class WebController {
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         client = clientRepository.findByUsername(principal.getName());
-        List<TransferEntity> transfers = transferRepository.findAllBySenderId(client.getId());
-        Collections.reverse(transfers);
         model.addAttribute("client", client);
-        model.addAttribute("transfers", transfers);
         return "profile";
     }
 
@@ -120,6 +127,19 @@ public class WebController {
     @PostMapping("/transfer/between_their")
     public String doTransferBetweenTheir(@RequestParam Card sender, @RequestParam Card recipient, @RequestParam long sum) throws InsufficientFunds {
         transfer.transferBetweenTheir(sender, recipient, sum);
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/credit")
+    public String credit(Model model) {
+        model.addAttribute("client", client);
+        return "credit";
+    }
+
+    @PostMapping("/credit")
+    public String getCredit(@RequestParam Currency currency) {
+        Credit credit = new Credit(client, currency);
+        creditRepository.save(credit);
         return "redirect:/profile";
     }
 

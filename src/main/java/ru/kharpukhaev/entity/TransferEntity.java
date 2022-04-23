@@ -51,40 +51,24 @@ public class TransferEntity {
 
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Card getCardSender() {
         return cardSender;
     }
 
-    public void setCardSender(Card sender) {
-        this.cardSender = sender;
+    public void setCardSender(Card cardSender) {
+        this.cardSender = cardSender;
     }
 
     public Card getCardRecipient() {
         return cardRecipient;
     }
 
-    public void setCardRecipient(Card recipient) {
-        this.cardRecipient = recipient;
-    }
-
-    public long getTransferSum() {
-        return transferSum;
-    }
-
-    public void setTransferSum(long transferSum) {
-        this.transferSum = transferSum;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public TransferStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TransferStatus status) {
-        this.status = status;
+    public void setCardRecipient(Card cardRecipient) {
+        this.cardRecipient = cardRecipient;
     }
 
     public Client getSender() {
@@ -103,12 +87,28 @@ public class TransferEntity {
         this.recipient = recipient;
     }
 
+    public long getTransferSum() {
+        return transferSum;
+    }
+
+    public void setTransferSum(long transferSum) {
+        this.transferSum = transferSum;
+    }
+
     public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public TransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransferStatus status) {
+        this.status = status;
     }
 
     @Override

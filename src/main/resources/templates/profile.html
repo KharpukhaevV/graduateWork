@@ -33,7 +33,7 @@
                 </form>
             </div>
             <div class="col">
-                <form method="GET" action="/" style="margin-top: 10px">
+                <form method="GET" action="/credit" style="margin-top: 10px">
                     <button type="submit" class="btn btn-success">Кредит</button>
                 </form>
             </div>
@@ -65,7 +65,7 @@
         <div class="row align-items-start justify-content-start" style="margin-top: 50px">
             <div class="col-5 align-self-start">
                 <h4>История переводов</h4>
-                <div th:if="${not #lists.isEmpty(transfers)}">
+                <div th:if="${not #lists.isEmpty(client.getTransfers())}">
                     <table class="table">
                         <tr>
                             <th scope="col">Дата</th>
@@ -73,7 +73,7 @@
                             <th scope="col">Сумма</th>
                             <th scope="col">Статус</th>
                         </tr>
-                        <tr th:each="transferEntity : ${transfers}">
+                        <tr th:each="transferEntity : ${client.getTransfers()}">
                             <td th:text="${transferEntity.getDate()}"></td>
                             <td th:text="${transferEntity.getRecipient()}"></td>
                             <td th:text="${transferEntity.getTransferSum()}"></td>
@@ -81,7 +81,7 @@
                         </tr>
                     </table>
                 </div>
-                <div th:if="${#lists.isEmpty(transfers)}">
+                <div th:if="${#lists.isEmpty(client.getTransfers())}">
                     <h5>Переводы не обнаружены</h5>
                 </div>
             </div>

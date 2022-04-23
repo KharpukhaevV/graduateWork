@@ -3,7 +3,6 @@ package ru.kharpukhaev.entity;
 import ru.kharpukhaev.entity.enums.Role;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -39,12 +38,15 @@ public class Client implements Serializable {
     @Size(min = 2, max = 16)
     private String lastname;
 
-    @Column(name = "cards")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "client")
     private Set<Card> cards;
 
-    @Column(name = "account_number")
-    private String accountNumber;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "sender")
+    private Set<TransferEntity> transfers;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
+    private Set<Credit> credits;
+
 
     @Column(name = "balance")
     private long balance;
@@ -52,7 +54,7 @@ public class Client implements Serializable {
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn (name = "client_id"))
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "client_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
@@ -101,14 +103,6 @@ public class Client implements Serializable {
         this.cards = card;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
     public long getBalance() {
         return balance;
     }
@@ -133,6 +127,21 @@ public class Client implements Serializable {
         this.active = active;
     }
 
+    public Set<TransferEntity> getTransfers() {
+        return transfers;
+    }
+
+    public void setTransfers(Set<TransferEntity> transfers) {
+        this.transfers = transfers;
+    }
+
+    public Set<Credit> getCredits() {
+        return credits;
+    }
+
+    public void setCredits(Set<Credit> credits) {
+        this.credits = credits;
+    }
 
     @Override
     public String toString() {
