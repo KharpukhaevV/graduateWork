@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
+import ru.kharpukhaev.entity.enums.TransferStatus;
 import ru.kharpukhaev.exceptions.InsufficientFunds;
 import ru.kharpukhaev.exceptions.RecipientNotFound;
 import ru.kharpukhaev.repository.CardRepository;
@@ -29,15 +30,13 @@ public class Transfer {
         this.transferRepository = transferRepository;
     }
 
-    private void doTransfer(Card cardSender, Card cardRecipient, long sum, double commission) throws InsufficientFunds {
+    public void doTransfer(Card cardSender, String cardRecipient, long sum) throws InsufficientFunds {
         if (cardRecipient != null) {
             if (sum <= cardSender.getBalance()) {
-                cardSender.setBalance((long) (cardSender.getBalance() - (sum + commission)));
-                cardRepository.save(cardSender);
-                TransferEntity transferEntity = new TransferEntity(cardSender, cardRecipient, sum);
-                if (frodMonitor.monitor(transferEntity)) {
-                    cardRecipient.setBalance(cardRecipient.getBalance() + sum);
-                    cardRepository.save(cardRecipient);
+                if (cardSender.getNumber().substring(0, 6).equals(cardRecipient.substring(0, 6))) {
+                    transferToClient(cardSender, cardRecipient, sum);
+                } else {
+                    transferToOther(cardSender, cardRecipient, sum);
                 }
             } else {
                 throw new InsufficientFunds("Недостаточно средств.", cardSender);
@@ -48,24 +47,35 @@ public class Transfer {
 
     }
 
-    public void transferToClient(Card cardSender, String recipientCardNumber, long sum) {
+    private void transferToClient(Card cardSender, String recipientCardNumber, long sum) {
         Card cardRecipient = cardRepository.findCardByNumber(recipientCardNumber);
-        doTransfer(cardSender, cardRecipient, sum, 0);
+        TransferEntity transferEntity = new TransferEntity(cardSender, cardRecipient, sum);
+        cardSender.setBalance(cardSender.getBalance() - sum);
+        cardRecipient.setBalance(cardRecipient.getBalance() + sum);
+        transferEntity.setStatus(TransferStatus.SUCCESS);
+        transferRepository.save(transferEntity);
+        cardRepository.save(cardSender);
+        cardRepository.save(cardRecipient);
+
     }
 
-    public void transferToOther(Card cardSender, String recipientCardNumber, long sum) {
+    private void transferToOther(Card cardSender, String recipientCardNumber, long sum) {
         Card cardRecipient = cardRepository.findCardByNumber(recipientCardNumber);
-        long commission = commissions.checkCommission(cardRecipient, sum);
-        doTransfer(cardSender, cardRecipient, sum, commission);
+        TransferEntity transferEntity = new TransferEntity(cardSender, cardRecipient, sum);
+        long sumWithCommission = commissions.checkCommission(cardRecipient, sum) + sum;
+        cardSender.setBalance(cardSender.getBalance() - sumWithCommission);
+        cardRepository.save(cardSender);
+        if (frodMonitor.monitor(transferEntity)) {
+            cardRecipient.setBalance(cardRecipient.getBalance() + sum);
+            cardRepository.save(cardRecipient);
+        }
     }
 
     public void transferBetweenTheir(Card cardSender, Card cardRecipient, long sum) {
-        if (cardSender.getBalance() < sum) {
-            throw new InsufficientFunds("Недостаточно средств.", cardSender);
-        }
         cardSender.setBalance(cardSender.getBalance() - sum);
         cardRecipient.setBalance(cardRecipient.getBalance() + sum);
         TransferEntity transferEntity = new TransferEntity(cardSender, cardRecipient, sum);
+        transferEntity.setStatus(TransferStatus.SUCCESS);
         cardRepository.save(cardRecipient);
         cardRepository.save(cardSender);
         transferRepository.save(transferEntity);

@@ -1,6 +1,7 @@
 package ru.kharpukhaev.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,9 +36,6 @@ public class WebController {
     private final CreditRepository creditRepository;
     private final Transfer transfer;
 
-    private Client client;
-
-    @Autowired
     public WebController(ClientRepository clientRepository,
                          TransferRepository transferRepository,
                          CardRepository cardRepository,
@@ -73,14 +71,13 @@ public class WebController {
     }
 
     @GetMapping("/profile")
-    public String profile(Model model, Principal principal) {
-        client = clientRepository.findByUsername(principal.getName());
+    public String profile(Model model, @AuthenticationPrincipal Client client) {
         model.addAttribute("client", client);
         return "profile";
     }
 
     @GetMapping("/add_card")
-    public String addCard() {
+    public String addCard(@AuthenticationPrincipal Client client) {
         Card card = new Card();
         card.setType(CardType.DEBIT);
         card.setClient(client);
@@ -94,32 +91,20 @@ public class WebController {
         return "transfer";
     }
 
-    @GetMapping("/transfer/to_client")
-    public String transferToClient(Model model) {
+    @GetMapping("/transfer/do_transfer")
+    public String transferToClient(@AuthenticationPrincipal Client client, Model model) {
         model.addAttribute("client", client);
         return "transfer_form";
     }
 
-    @PostMapping("/transfer/to_client")
+    @PostMapping("/transfer/do_transfer")
     public String doTransferToClient(@RequestParam Card sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
-        transfer.transferToClient(sender, recipient, sum);
-        return "redirect:/profile";
-    }
-
-    @GetMapping("/transfer/to_other")
-    public String transferToOther(Model model) {
-        model.addAttribute("client", client);
-        return "transfer_form";
-    }
-
-    @PostMapping("/transfer/to_other")
-    public String doTransferToOther(@RequestParam Card sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
-        transfer.transferToOther(sender, recipient, sum);
+        transfer.doTransfer(sender, recipient, sum);
         return "redirect:/profile";
     }
 
     @GetMapping("/transfer/between_their")
-    public String transferBetweenTheir(Model model) {
+    public String transferBetweenTheir(@AuthenticationPrincipal Client client, Model model) {
         model.addAttribute("client", client);
         return "transfer_form";
     }
@@ -131,16 +116,16 @@ public class WebController {
     }
 
     @GetMapping("/credit")
-    public String credit(Model model) {
+    public String credit(@AuthenticationPrincipal Client client, Model model) {
         model.addAttribute("client", client);
         return "credit";
     }
 
     @PostMapping("/credit")
-    public String getCredit(@RequestParam Currency currency) {
+    public String getCredit(@AuthenticationPrincipal Client client, @RequestParam Currency currency) {
         Credit credit = new Credit(client, currency);
         creditRepository.save(credit);
-        return "redirect:/profile";
+        return "redirect:/credit";
     }
 
     @ExceptionHandler(InsufficientFunds.class)
@@ -155,11 +140,4 @@ public class WebController {
         return "";
     }
 
-            /* TODO
-                Обработка исключений
-                новые сущности карт и счетов
-                переводы на картах и счетах
-                переводы между своими счетами
-                авторизация и админка
-             */
 }
