@@ -1,6 +1,5 @@
 package ru.kharpukhaev.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.Credit;
-import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.CardType;
 import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.entity.enums.Role;
@@ -23,9 +21,7 @@ import ru.kharpukhaev.services.Transfer;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @Controller
 public class WebController {
@@ -35,6 +31,8 @@ public class WebController {
     private final CardRepository cardRepository;
     private final CreditRepository creditRepository;
     private final Transfer transfer;
+
+    private Client client;
 
     public WebController(ClientRepository clientRepository,
                          TransferRepository transferRepository,
@@ -70,14 +68,18 @@ public class WebController {
         return "redirect:/login";
     }
 
+//    @AuthenticationPrincipal Client client
     @GetMapping("/profile")
-    public String profile(Model model, @AuthenticationPrincipal Client client) {
+    public String profile(Model model, Principal principal) {
+        client = clientRepository.findByUsername(principal.getName());
         model.addAttribute("client", client);
+        model.addAttribute("admin", Role.ADMIN);
+        model.addAttribute("moder", Role.MODERATOR);
         return "profile";
     }
 
     @GetMapping("/add_card")
-    public String addCard(@AuthenticationPrincipal Client client) {
+    public String addCard() {
         Card card = new Card();
         card.setType(CardType.DEBIT);
         card.setClient(client);
@@ -92,7 +94,7 @@ public class WebController {
     }
 
     @GetMapping("/transfer/do_transfer")
-    public String transferToClient(@AuthenticationPrincipal Client client, Model model) {
+    public String transferToClient(Model model) {
         model.addAttribute("client", client);
         return "transfer_form";
     }
@@ -104,7 +106,7 @@ public class WebController {
     }
 
     @GetMapping("/transfer/between_their")
-    public String transferBetweenTheir(@AuthenticationPrincipal Client client, Model model) {
+    public String transferBetweenTheir(Model model) {
         model.addAttribute("client", client);
         return "transfer_form";
     }
@@ -116,13 +118,13 @@ public class WebController {
     }
 
     @GetMapping("/credit")
-    public String credit(@AuthenticationPrincipal Client client, Model model) {
+    public String credit(Model model) {
         model.addAttribute("client", client);
         return "credit";
     }
 
     @PostMapping("/credit")
-    public String getCredit(@AuthenticationPrincipal Client client, @RequestParam Currency currency) {
+    public String getCredit(@RequestParam Currency currency) {
         Credit credit = new Credit(client, currency);
         creditRepository.save(credit);
         return "redirect:/credit";
@@ -139,5 +141,10 @@ public class WebController {
     public String handleRecipientNotFound(RecipientNotFound e, Model model) {
         return "";
     }
+
+    /*
+    TODO
+    Почистить котролеры
+     */
 
 }

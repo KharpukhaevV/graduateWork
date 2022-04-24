@@ -1,5 +1,6 @@
 package ru.kharpukhaev.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
     private final ClientRepository clientRepository;
 
@@ -35,18 +37,9 @@ public class AdminController {
     }
 
     @PostMapping("/client")
-    public String clientSave(@RequestParam Map<String, String> form,
-                             @RequestParam("clientId") Client client,
-                             @RequestParam("roles") Set<String> roles) {
+    public String clientSave(@RequestParam("clientId") Client client, @RequestParam("roles") Set<Role> roles) {
 
-//        Set<String> roles = Arrays.stream(Role.values()).map(Role::name).collect(Collectors.toSet());
-
-//        client.getRoles().clear();
-//        for (String key : form.keySet()) {
-//            if (roles.contains(key)) {
-//                client.getRoles().add(Role.valueOf(key));
-//            }
-//        }
+        client.setRoles(roles);
         clientRepository.save(client);
         return "redirect:/admin";
     }
