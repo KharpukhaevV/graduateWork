@@ -1,22 +1,18 @@
 package ru.kharpukhaev.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.kharpukhaev.entity.Account;
 import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
-import ru.kharpukhaev.entity.Credit;
-import ru.kharpukhaev.entity.enums.CardType;
-import ru.kharpukhaev.entity.enums.Currency;
-import ru.kharpukhaev.entity.enums.Role;
+import ru.kharpukhaev.entity.CreditBid;
+import ru.kharpukhaev.entity.enums.*;
 import ru.kharpukhaev.exceptions.InsufficientFunds;
 import ru.kharpukhaev.exceptions.RecipientNotFound;
-import ru.kharpukhaev.repository.CardRepository;
-import ru.kharpukhaev.repository.ClientRepository;
-import ru.kharpukhaev.repository.CreditRepository;
-import ru.kharpukhaev.repository.TransferRepository;
+import ru.kharpukhaev.repository.*;
+import ru.kharpukhaev.services.ClientCredit;
 import ru.kharpukhaev.services.Transfer;
 
 import javax.validation.Valid;
@@ -29,7 +25,11 @@ public class WebController {
     private final ClientRepository clientRepository;
     private final TransferRepository transferRepository;
     private final CardRepository cardRepository;
-    private final CreditRepository creditRepository;
+    private final CreditBidRepository creditBidRepository;
+
+    private final AccountRepository accountRepository;
+
+    private final ClientCredit clientCredit;
     private final Transfer transfer;
 
     private Client client;
@@ -37,12 +37,14 @@ public class WebController {
     public WebController(ClientRepository clientRepository,
                          TransferRepository transferRepository,
                          CardRepository cardRepository,
-                         CreditRepository creditRepository,
-                         Transfer transfer) {
+                         CreditBidRepository creditBidRepository,
+                         AccountRepository accountRepository, ClientCredit clientCredit, Transfer transfer) {
         this.clientRepository = clientRepository;
         this.transferRepository = transferRepository;
         this.cardRepository = cardRepository;
-        this.creditRepository = creditRepository;
+        this.creditBidRepository = creditBidRepository;
+        this.accountRepository = accountRepository;
+        this.clientCredit = clientCredit;
         this.transfer = transfer;
     }
 
@@ -68,7 +70,7 @@ public class WebController {
         return "redirect:/login";
     }
 
-//    @AuthenticationPrincipal Client client
+    //    @AuthenticationPrincipal Client client
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {
         client = clientRepository.findByUsername(principal.getName());
@@ -80,27 +82,32 @@ public class WebController {
 
     @GetMapping("/add_card")
     public String addCard() {
-        Card card = new Card();
-        card.setType(CardType.DEBIT);
-        card.setClient(client);
-        card.setNumber("446644" + (1000000000 + (long) (Math.random() * 9999999999L)));
+        Card card = new Card(CardType.DEBIT, client);
         cardRepository.save(card);
         return "redirect:/profile";
     }
 
-    @GetMapping("/transfer")
-    public String transfers() {
-        return "transfer";
+    @GetMapping("/add_account")
+    public String addAccount() {
+        Account account = new Account(AccountType.CHECKING_ACCOUNT, client);
+        Account account1 = new Account(AccountType.CURRENCY_ACCOUNT, client);
+        Account account2 = new Account(AccountType.SAVINGS_ACCOUNT, client);
+        accountRepository.save(account);
+        accountRepository.save(account1);
+        accountRepository.save(account2);
+        return "redirect:/profile";
     }
 
     @GetMapping("/transfer/do_transfer")
     public String transferToClient(Model model) {
         model.addAttribute("client", client);
+        model.addAttribute("admin", Role.ADMIN);
+        model.addAttribute("moder", Role.MODERATOR);
         return "transfer_form";
     }
 
     @PostMapping("/transfer/do_transfer")
-    public String doTransferToClient(@RequestParam Card sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
+    public String doTransferToClient(@RequestParam String sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
         transfer.doTransfer(sender, recipient, sum);
         return "redirect:/profile";
     }
@@ -108,6 +115,8 @@ public class WebController {
     @GetMapping("/transfer/between_their")
     public String transferBetweenTheir(Model model) {
         model.addAttribute("client", client);
+        model.addAttribute("admin", Role.ADMIN);
+        model.addAttribute("moder", Role.MODERATOR);
         return "transfer_form";
     }
 
@@ -120,13 +129,28 @@ public class WebController {
     @GetMapping("/credit")
     public String credit(Model model) {
         model.addAttribute("client", client);
+        model.addAttribute("admin", Role.ADMIN);
+        model.addAttribute("moder", Role.MODERATOR);
+        model.addAttribute("status", CreditStatus.OFFERED);
         return "credit";
     }
 
     @PostMapping("/credit")
     public String getCredit(@RequestParam Currency currency) {
-        Credit credit = new Credit(client, currency);
-        creditRepository.save(credit);
+        CreditBid creditBid = new CreditBid(client, currency);
+        creditBidRepository.save(creditBid);
+        return "redirect:/credit";
+    }
+
+    @PostMapping("/accept")
+    public String acceptCredit(@RequestParam CreditBid creditBid) {
+        clientCredit.creditAccept(creditBid);
+        return "redirect:/credit";
+    }
+
+    @PostMapping("/decline")
+    public String declineCredit(@RequestParam CreditBid creditBid) {
+        clientCredit.creditDecline(creditBid);
         return "redirect:/credit";
     }
 
@@ -142,9 +166,12 @@ public class WebController {
         return "";
     }
 
+
     /*
     TODO
     Почистить котролеры
+    Реализовать переводы карта счет и тд
+    Реализовать OperatorCheck
      */
 
 }

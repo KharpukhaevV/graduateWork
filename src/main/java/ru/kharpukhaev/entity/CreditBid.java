@@ -6,8 +6,8 @@ import ru.kharpukhaev.entity.enums.Currency;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "credits")
-public class Credit {
+@Table(name = "credit_bids")
+public class CreditBid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -32,10 +32,10 @@ public class Credit {
 
     private String expirationDate;
 
-    public Credit() {
+    public CreditBid() {
     }
 
-    public Credit(Client client, Currency currency) {
+    public CreditBid(Client client, Currency currency) {
         this.client = client;
         this.currency = currency;
         this.status = CreditStatus.PROCESSED;

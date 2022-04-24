@@ -1,6 +1,5 @@
 package ru.kharpukhaev.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -8,14 +7,11 @@ import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.enums.Role;
 import ru.kharpukhaev.repository.ClientRepository;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
-@PreAuthorize("hasAuthority('ADMIN')")
+//@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
     private final ClientRepository clientRepository;
 

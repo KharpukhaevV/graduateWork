@@ -7,7 +7,6 @@ import ru.kharpukhaev.entity.enums.Role;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -44,11 +43,17 @@ public class Client implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
     private Set<Card> cards;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
+    private Set<Account> accounts;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "sender")
-    private Set<TransferEntity> transfers;
+    private Set<TransferEntity> expenses;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "recipient")
+    private Set<TransferEntity> receiving;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
-    private Set<Credit> credits;
+    private Set<CreditBid> creditBids;
 
 
     @Column(name = "balance")
@@ -156,20 +161,36 @@ public class Client implements UserDetails {
         this.active = active;
     }
 
-    public Set<TransferEntity> getTransfers() {
-        return transfers;
+    public Set<TransferEntity> getExpenses() {
+        return expenses;
     }
 
-    public void setTransfers(Set<TransferEntity> transfers) {
-        this.transfers = transfers;
+    public void setExpenses(Set<TransferEntity> transfers) {
+        this.expenses = transfers;
     }
 
-    public Set<Credit> getCredits() {
-        return credits;
+    public Set<TransferEntity> getReceiving() {
+        return receiving;
     }
 
-    public void setCredits(Set<Credit> credits) {
-        this.credits = credits;
+    public void setReceiving(Set<TransferEntity> receiving) {
+        this.receiving = receiving;
+    }
+
+    public Set<CreditBid> getCredits() {
+        return creditBids;
+    }
+
+    public void setCredits(Set<CreditBid> creditBids) {
+        this.creditBids = creditBids;
+    }
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
     }
 
     @Override

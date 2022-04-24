@@ -1,5 +1,6 @@
 package ru.kharpukhaev.entity;
 
+import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.CardType;
 
 import javax.persistence.*;
@@ -13,17 +14,33 @@ public class Card {
     @Column(name = "card_id", unique = true, nullable = false)
     private Long id;
 
-    private String number;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Enumerated(EnumType.STRING)
     private CardType type;
-
-    private long balance;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
+    public Card() {
+    }
+
+    public Card(CardType type, Client client) {
+        this.account = new Account(AccountType.CHECKING_ACCOUNT, client);
+        this.type = type;
+        this.client = client;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public Client getClient() {
         return client;
@@ -33,28 +50,12 @@ public class Card {
         this.client = client;
     }
 
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
     public CardType getType() {
         return type;
     }
 
     public void setType(CardType type) {
         this.type = type;
-    }
-
-    public long getBalance() {
-        return balance;
-    }
-
-    public void setBalance(long balance) {
-        this.balance = balance;
     }
 
     public Long getId() {

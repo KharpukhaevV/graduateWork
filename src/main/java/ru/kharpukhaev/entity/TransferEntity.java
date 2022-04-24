@@ -16,14 +16,6 @@ public class TransferEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "sender_card_id", nullable = false)
-    private Card cardSender;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "recipient_card_id", nullable = false)
-    private Card cardRecipient;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sender_id", nullable = false)
     private Client sender;
 
@@ -40,35 +32,17 @@ public class TransferEntity {
     public TransferEntity() {
     }
 
-    public TransferEntity(Card cardSender, Card cardRecipient, long transferSum) {
-        this.cardSender = cardSender;
-        this.cardRecipient = cardRecipient;
+    public TransferEntity(Client sender, Client recipient, long transferSum) {
         this.transferSum = transferSum;
         this.status = TransferStatus.PROCESSED;
-        this.sender = cardSender.getClient();
-        this.recipient = cardRecipient.getClient();
+        this.sender = sender;
+        this.recipient = recipient;
         this.date = new SimpleDateFormat("dd-MM-yyyy HH:mm").format(new Date());
 
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Card getCardSender() {
-        return cardSender;
-    }
-
-    public void setCardSender(Card cardSender) {
-        this.cardSender = cardSender;
-    }
-
-    public Card getCardRecipient() {
-        return cardRecipient;
-    }
-
-    public void setCardRecipient(Card cardRecipient) {
-        this.cardRecipient = cardRecipient;
     }
 
     public Client getSender() {
@@ -113,8 +87,8 @@ public class TransferEntity {
 
     @Override
     public String toString() {
-        return "Sender=" + cardSender +
-                ", AccountNumber=" + cardRecipient +
+        return "Sender=" + sender +
+                ", AccountNumber=" + recipient +
                 ", TransferSum=" + transferSum;
     }
 }
