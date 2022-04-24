@@ -3,79 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <title>Transfer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link th:replace="fragments/dependency :: style1">
+    <link th:replace="fragments/dependency :: style2">
 </head>
 <body>
 <div class="container">
-    <div class="row align-items-center justify-content-center" style="margin-top: 10px; text-align: center">
-
-
-        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/do_transfer'}">
-            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/do_transfer">
-                <h3>Перевод клиенту нашего банка</h3>
-                <p>Выберете карту</p>
-
-                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">
-                    <input  type="radio" class="btn-check" name="sender" th:id="${iter}" autocomplete="off" th:value="${card.getId()}"/>
-                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="${iter}">
-                        <span th:text="'Карта ' + ${card.getNumber()}"></span>
-                        <br>
-                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>
-                    </label>
-                </div>
-
-                <div>
-                    <label for="recipientId">Номер карты</label>
-                    <input type="text" class="form-control" name="recipient" id="recipientId">
-                </div>
-                <div>
-                    <label for="sum">Сумма перевода</label>
-                    <input type="text" class="form-control" name="sum" id="sum" >
-                </div>
-                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>
-            </form>
-            <form method="GET" action="/transfer" style="margin-top: 10px">
-                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
-            </form>
-        </div>
-
-
-        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/between_their'}">
-            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/between_their">
-                <h3>Перевод между своими счетами</h3>
-                <p>Выберете карту</p>
-                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">
-                    <input  type="radio" class="btn-check" name="sender" th:id="'s' + ${iter}" autocomplete="off" th:value="${card.getId()}"/>
-                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="'s' + ${iter}">
-                        <span th:text="'Карта ' + ${card.getNumber()}"></span>
-                        <br>
-                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>
-                    </label>
-                </div>
-                <hr>
-                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">
-                    <input  type="radio" class="btn-check" name="recipient" th:id="'r' + ${iter}" autocomplete="off" th:value="${card.getId()}"/>
-                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="'r' + ${iter}">
-                        <span th:text="'Карта ' + ${card.getNumber()}"></span>
-                        <br>
-                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>
-                    </label>
-                </div>
-                <div>
-                    <label for="sum">Сумма перевода</label>
-                    <input type="text" class="form-control" name="sum" id="sum" >
-                </div>
-                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>
-            </form>
-            <form method="GET" action="/transfer" style="margin-top: 10px">
-                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
+    <nav th:replace="fragments/nav_bar :: navbar"></nav>
+    <div class="row align-self-start" style="margin-top: 10px;">
+        <div class="col">
+            <h4>Платежи</h4>
+            <form method="GET" action="/profile" style="margin-top: 10px">
+                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px;">Назад</button>
             </form>
         </div>
     </div>
+    <hr>
+    <div class="row" th:if="${#httpServletRequest.requestURI == '/transfer/do_transfer'}">
+        <form method="POST" class="form-floating" action="/transfer/do_transfer">
+            <div class="col-12">
+                <h5>Перевод на карту или счет</h5>
+                <p>Выберете вашу карту/счет</p>
+                <div class="btn-group" role="group">
+                    <div th:each="account, iter : ${client.getAccounts()}">
+                        <input type="radio" class="btn-check" name="sender" th:id="${iter}" autocomplete="off"
+                               th:value="${account.getId()}"/>
+                        <label style="width: 210px; margin-right: 5px;" class="btn btn-outline-success"
+                               th:for="${iter}">
+                            <span th:text="${account.getNumber()}"></span>
+                            <br>
+                            <span th:text="'Баланс: ' + ${account.getBalance()}"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <label for="recipientId">Номер карты/счета получателя</label>
+                <input type="text" class="form-control" name="recipient" id="recipientId">
+            </div>
+            <div class="col-3">
+                <label for="sum">Сумма перевода</label>
+                <input type="text" class="form-control" name="sum" id="sum">
+            </div>
+            <div class="col-3">
+                <button type="submit" class="btn btn-outline-success" style="margin-top: 10px">Перевести</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="row" th:if="${#httpServletRequest.requestURI == '/transfer/between_their'}">
+        <form method="POST" class="form-floating" action="/transfer/between_their">
+            <div class="col-12">
+                <h5>Перевод между своими счетами</h5>
+                <p>Выберете ваш счет для отправки</p>
+                <div class="btn-group" role="group" th:each="account, iter : ${client.getAccounts()}">
+                    <input type="radio" class="btn-check" name="sender" th:id="${'s' + iter}" autocomplete="off"
+                           th:value="${account.getId()}"/>
+                    <label style="width: 210px;" class="btn btn-outline-success" th:for="${'s' + iter}">
+                        <span th:text="${account.getNumber()}"></span>
+                        <br>
+                        <span th:text="'Баланс: ' + ${account.getBalance()}"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-12">
+                <p>Выберете ваш счет для получения</p>
+                <div class="btn-group" role="group" th:each="account, iter : ${client.getAccounts()}">
+                    <input type="radio" class="btn-check" name="recipient" th:id="${'r' + iter}" autocomplete="off"
+                           th:value="${account.getId()}"/>
+                    <label style="width: 210px;" class="btn btn-outline-success" th:for="${'r' + iter}">
+                        <span th:text="${account.getNumber()}"></span>
+                        <br>
+                        <span th:text="'Баланс: ' + ${account.getBalance()}"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-3">
+                <label for="sum">Сумма перевода</label>
+                <input type="text" class="form-control" name="sum" id="sum">
+            </div>
+            <div class="col-3">
+                <button type="submit" class="btn btn-outline-success" style="margin-top: 10px">Перевести</button>
+            </div>
+        </form>
+    </div>
+
+    <!--        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/between_their'}">-->
+    <!--            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/between_their">-->
+    <!--                <h3>Перевод между своими счетами</h3>-->
+    <!--                <p>Выберете карту</p>-->
+    <!--                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">-->
+    <!--                    <input  type="radio" class="btn-check" name="sender" th:id="'s' + ${iter}" autocomplete="off" th:value="${card.getId()}"/>-->
+    <!--                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="'s' + ${iter}">-->
+    <!--                        <span th:text="'Карта ' + ${card.getNumber()}"></span>-->
+    <!--                        <br>-->
+    <!--                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>-->
+    <!--                    </label>-->
+    <!--                </div>-->
+    <!--                <hr>-->
+    <!--                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">-->
+    <!--                    <input  type="radio" class="btn-check" name="recipient" th:id="'r' + ${iter}" autocomplete="off" th:value="${card.getId()}"/>-->
+    <!--                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="'r' + ${iter}">-->
+    <!--                        <span th:text="'Карта ' + ${card.getNumber()}"></span>-->
+    <!--                        <br>-->
+    <!--                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>-->
+    <!--                    </label>-->
+    <!--                </div>-->
+    <!--                <div>-->
+    <!--                    <label for="sum">Сумма перевода</label>-->
+    <!--                    <input type="text" class="form-control" name="sum" id="sum" >-->
+    <!--                </div>-->
+    <!--                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>-->
+    <!--            </form>-->
+    <!--            <form method="GET" action="/transfer" style="margin-top: 10px">-->
+    <!--                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>-->
+    <!--            </form>-->
+    <!--        </div>-->
+    <!--    </div>-->
 </div>
 <hr>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script th:replace="fragments/dependency :: script1"></script>
+<script th:replace="fragments/dependency :: script2"></script>
+<script th:replace="fragments/dependency :: script3"></script>
 </body>
 </html>

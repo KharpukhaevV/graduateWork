@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<nav th:fragment="navbar" class="navbar navbar-light navbar-expand-lg">
+    <a class="navbar-brand" href="/profile"><img src="/logo.PNG" style="height: 70px; width: 100px"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <!--    <form method="GET" action="/transfer" style="margin: 10px">-->
+    <!--        <button type="submit" class="btn btn-sm btn-outline-success">Платежи</button>-->
+    <!--    </form>-->
+    <div class="dropdown show">
+        <a class="btn btn-sm btn-outline-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Платежи
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="/transfer/do_transfer">Перевод на карту</a>
+            <a class="dropdown-item" href="/transfer/between_their">Между своими счетами</a>
+        </div>
+    </div>
+    <form method="GET" action="/credit" style="margin: 10px">
+        <button type="submit" class="btn btn-sm btn-outline-success">Кредит</button>
+    </form>
+    <form method="GET" action="/" style="margin: 10px">
+        <button type="submit" class="btn btn-sm btn-outline-success">Вклады</button>
+    </form>
+    <span th:if="${#lists.contains(client.getRoles(), admin) or #lists.contains(client.getRoles(), moder)}">|</span>
+    <form method="GET" action="/admin" style="margin: 10px" th:if="${#lists.contains(client.getRoles(), admin)}">
+        <button type="submit" class="btn btn-sm btn-outline-success">Панель администратора</button>
+    </form>
+    <form method="GET" action="/operator/payments" style="margin: 10px"
+          th:if="${#lists.contains(client.getRoles(), moder)}">
+        <button type="submit" class="btn btn-sm btn-outline-success">Проверка платежей</button>
+    </form>
+    <form method="GET" action="/operator/credits" style="margin: 10px"
+          th:if="${#lists.contains(client.getRoles(), moder)}">
+        <button type="submit" class="btn btn-sm btn-outline-success">Расмотрение кредитов</button>
+    </form>
+    <form th:action="@{/logout}" style="margin: 10px; text-align: right" method="post">
+        <button type="submit" class="btn btn-sm btn-outline-danger">Выход</button>
+    </form>
+    <hr>
+</nav>
+
+</body>
+</html>

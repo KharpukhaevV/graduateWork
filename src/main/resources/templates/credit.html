@@ -3,70 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <title>Кредиты</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link th:replace="fragments/dependency :: style1">
+    <link th:replace="fragments/dependency :: style2">
+
+    <link th:fragment="style1" rel="stylesheet" href="style.css">
+    <link th:fragment="style2" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container">
+<div class="container">
+    <nav th:replace="fragments/nav_bar :: navbar"></nav>
+    <div class="row align-self-start" style="margin-top: 10px;">
+        <div class="col">
+            <h4>Заявки на кредит</h4>
+            <form method="GET" action="/profile" style="margin-top: 10px">
+                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px;">Назад</button>
+            </form>
+        </div>
+    </div>
+    <hr>
+    <div class="row" style="margin-top: 30px">
+        <div class="col-3">
+            <h5>Подать заявку на кредит</h5>
+            <form method="POST" class="form-floating mb-2" style="margin-top: 10px" action="/credit">
+                <p>Выберете валюту</p>
+                <div class="btn-group" style="width: 250px;">
+                    <input type="radio" class="btn-check" name="currency" id="option1" autocomplete="off" value="RUB"/>
+                    <label class="btn btn-outline-success" for="option1">RUB</label>
 
-        <div class="row align-items-center justify-content-center" style="margin-top: 50px">
-            <div class="col-3 align-self-start" style="text-align: center">
-                <h2>Кредиты</h2>
-                <form method="POST" class="form-floating mb-2" style="margin-top: 10px" action="/credit">
-                    <p>Выбор валюты</p>
-                    <div class="btn-group-vertical" style="width: 250px;">
-                        <input type="radio" class="btn-check" name="currency" id="option1" autocomplete="off" value="RUB"/>
-                        <label class="btn btn-outline-success" for="option1">RUB</label>
+                    <input type="radio" class="btn-check" name="currency" id="option2" autocomplete="off" value="USD"/>
+                    <label class="btn btn-outline-success" for="option2">USD</label>
 
-                        <input  type="radio" class="btn-check" name="currency" id="option2" autocomplete="off" value="USD"/>
-                        <label style="margin-top: 5px; margin-bottom: 5px" class="btn btn-outline-success" for="option2">USD</label>
-
-                        <input type="radio" class="btn-check" name="currency" id="option3" autocomplete="off" value="EUR"/>
-                        <label class="btn btn-outline-success" for="option3">EUR</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 250px; margin-top: 10px">Оформить заявку</button>
-                </form>
-                <form method="GET" action="/profile" style="margin-top: 10px">
-                    <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
+                    <input type="radio" class="btn-check" name="currency" id="option3" autocomplete="off" value="EUR"/>
+                    <label class="btn btn-outline-success" for="option3">EUR</label>
+                </div>
+                <button type="submit" class="btn btn-outline-primary" style="width: 250px; margin-top: 10px">Оформить
+                    заявку
+                </button>
                 </form>
             </div>
-        </div>
-
-        <div class="row align-items-start justify-content-start" style="margin-top: 50px">
-            <div class="col-5 align-self-start">
-                <h4>Ваши кредиты</h4>
-                <div th:if="${not #lists.isEmpty(client.getCredits())}">
-                    <table class="table">
-                        <tr>
-                            <th scope="col">Дата оформления</th>
-                            <th scope="col">Дата окончания</th>
-                            <th scope="col">Лимит</th>
-                            <th scope="col">Процент</th>
-                            <th scope="col">Валюта</th>
-                            <th scope="col">Статус</th>
-                            <th scope="col"></th>
-                        </tr>
-                        <tr th:each="credit : ${client.getCredits()}">
-                            <td th:text="${credit.getStartDate()}"></td>
-                            <td th:text="${credit.getExpirationDate()}"></td>
-                            <td th:text="${credit.getLimitCard()}"></td>
-                            <td th:text="${credit.getPercent()}"></td>
-                            <td th:text="${credit.getCurrency()}"></td>
-                            <td th:text="${credit.getStatus()}"></td>
-                            <td th:text="'Button'"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div th:if="${#lists.isEmpty(client.getCredits())}">
-                    <h5>Кредитов нет</h5>
-                </div>
+        <div class="col">
+            <div th:if="${not #lists.isEmpty(client.getCredits())}">
+                <h5>Активные заявки</h5>
+                <table class="table" style="margin-top: 40px">
+                    <tr>
+                        <th scope="col">Дата оформления</th>
+                        <th scope="col">Дата окончания</th>
+                        <th scope="col">Лимит</th>
+                        <th scope="col">Процент</th>
+                        <th scope="col">Валюта</th>
+                        <th scope="col">Статус</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    <tr th:each="creditBid : ${client.getCredits()}">
+                        <td th:text="${creditBid.getStartDate()}"></td>
+                        <td th:text="${creditBid.getExpirationDate()}"></td>
+                        <td th:text="${creditBid.getLimitCard()}"></td>
+                        <td th:text="${creditBid.getPercent()}"></td>
+                        <td th:text="${creditBid.getCurrency()}"></td>
+                        <td th:text="${creditBid.getStatus()}"></td>
+                        <td th:if="${status.equals(creditBid.getStatus())}">
+                            <form method="POST" action="/accept">
+                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <input type="submit" value="Принять" id="accept" class="btn btn-sm btn-outline-success">
+                            </form>
+                        </td>
+                        <td th:if="${status.equals(creditBid.getStatus())}">
+                            <form method="POST" action="/decline">
+                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <input type="submit" value="Отклонить" id="decline"
+                                       class="btn btn-sm btn-outline-danger">
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div th:if="${#lists.isEmpty(client.getCredits())}">
+                <h5>Активных заявок нет</h5>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <table class="table" style="margin-top: 40px">
+                <tr>
+                    <th scope="col">Карта</th>
+                    <th scope="col">Сумма</th>
+                    <th scope="col">Процент</th>
+                    <th scope="col">Дата окончания</th>
+                    <th scope="col">Статус</th>
+                </tr>
+                <tr th:each="credit : ${credits}">
+                    <td th:text="${credit.getCard().getAccount().getNumber()}"></td>
+                    <td th:text="${credit.getSum()}"></td>
+                    <td th:text="${credit.getCard().getCreditBid().getPercent()}"></td>
+                    <td th:text="${credit.getExpirationDate()}"></td>
+                    <td th:text="${credit.getCreditStatus()}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+<script th:replace="fragments/dependency :: script1"></script>
+<script th:replace="fragments/dependency :: script2"></script>
+<script th:replace="fragments/dependency :: script3"></script>
 </body>
 </html>

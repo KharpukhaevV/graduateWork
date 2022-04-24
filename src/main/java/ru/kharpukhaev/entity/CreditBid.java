@@ -1,13 +1,14 @@
 package ru.kharpukhaev.entity;
 
-import ru.kharpukhaev.entity.enums.CreditStatus;
+import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "credits")
-public class Credit {
+@Table(name = "credit_bids")
+public class CreditBid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -19,7 +20,7 @@ public class Credit {
     private Client client;
 
     @Enumerated(EnumType.STRING)
-    private CreditStatus status;
+    private CreditBidStatus status;
 
     private long limitCard;
 
@@ -28,17 +29,21 @@ public class Credit {
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    private String startDate;
+    private LocalDate startDate;
 
-    private String expirationDate;
+    private LocalDate expirationDate;
 
-    public Credit() {
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id")
+    private Card card;
+
+    public CreditBid() {
     }
 
-    public Credit(Client client, Currency currency) {
+    public CreditBid(Client client, Currency currency) {
         this.client = client;
         this.currency = currency;
-        this.status = CreditStatus.PROCESSED;
+        this.status = CreditBidStatus.PROCESSED;
     }
 
     public Long getId() {
@@ -53,11 +58,11 @@ public class Credit {
         this.client = client;
     }
 
-    public CreditStatus getStatus() {
+    public CreditBidStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CreditStatus status) {
+    public void setStatus(CreditBidStatus status) {
         this.status = status;
     }
 
@@ -77,19 +82,19 @@ public class Credit {
         this.percent = percent;
     }
 
-    public String getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public String getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -99,5 +104,13 @@ public class Credit {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
     }
 }

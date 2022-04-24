@@ -7,16 +7,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kharpukhaev.entity.Client;
-import ru.kharpukhaev.entity.Credit;
+import ru.kharpukhaev.entity.CreditBid;
 import ru.kharpukhaev.entity.TransferEntity;
-import ru.kharpukhaev.entity.enums.CreditStatus;
+import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.TransferStatus;
 import ru.kharpukhaev.repository.ClientRepository;
-import ru.kharpukhaev.repository.CreditRepository;
+import ru.kharpukhaev.repository.CreditBidRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 import ru.kharpukhaev.services.OperatorCheck;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Controller
@@ -28,14 +29,14 @@ public class OperatorController {
 
     private final TransferRepository transferRepository;
 
-    private final CreditRepository creditRepository;
+    private final CreditBidRepository creditBidRepository;
 
     private final OperatorCheck operatorCheck;
 
-    public OperatorController(ClientRepository clientRepository, TransferRepository transferRepository, CreditRepository creditRepository, OperatorCheck operatorCheck) {
+    public OperatorController(ClientRepository clientRepository, TransferRepository transferRepository, CreditBidRepository creditBidRepository, OperatorCheck operatorCheck) {
         this.clientRepository = clientRepository;
         this.transferRepository = transferRepository;
-        this.creditRepository = creditRepository;
+        this.creditBidRepository = creditBidRepository;
         this.operatorCheck = operatorCheck;
     }
 
@@ -61,13 +62,14 @@ public class OperatorController {
 
     @GetMapping("/credits")
     public String credits(Model model) {
-        model.addAttribute("credits", creditRepository.findAllByStatus(CreditStatus.PROCESSED));
+        model.addAttribute("credits", creditBidRepository.findAllByStatus(CreditBidStatus.PROCESSED));
+        model.addAttribute("currentDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         return "operator_credits";
     }
 
     @PostMapping("/offer")
-    public String creditOffer(@RequestParam Credit credit, @RequestParam long limit, @RequestParam double percent, @RequestParam String date) {
-        operatorCheck.makeCreditOffer(credit, limit, percent, date);
+    public String creditOffer(@RequestParam CreditBid creditBid, @RequestParam long limit, @RequestParam double percent, @RequestParam String date) {
+        operatorCheck.makeCreditOffer(creditBid, limit, percent, LocalDate.parse(date));
         return "redirect:/operator/credits";
     }
 }

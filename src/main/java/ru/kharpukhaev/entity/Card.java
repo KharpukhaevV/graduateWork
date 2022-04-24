@@ -1,8 +1,10 @@
 package ru.kharpukhaev.entity;
 
+import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.CardType;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "cards")
@@ -13,17 +15,39 @@ public class Card {
     @Column(name = "card_id", unique = true, nullable = false)
     private Long id;
 
-    private String number;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Enumerated(EnumType.STRING)
     private CardType type;
-
-    private long balance;
 
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private CreditBid creditBid;
+
+    private LocalDate expirationDate;
+
+    public Card() {
+    }
+
+    public Card(CardType type, Client client) {
+        this.account = new Account(AccountType.CHECKING_ACCOUNT, client);
+        this.type = type;
+        this.client = client;
+        this.expirationDate = LocalDate.now().plusYears(1);
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public Client getClient() {
         return client;
@@ -31,14 +55,6 @@ public class Card {
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public CardType getType() {
@@ -49,12 +65,20 @@ public class Card {
         this.type = type;
     }
 
-    public long getBalance() {
-        return balance;
+    public CreditBid getCreditBid() {
+        return creditBid;
     }
 
-    public void setBalance(long balance) {
-        this.balance = balance;
+    public void setCreditBid(CreditBid creditBid) {
+        this.creditBid = creditBid;
+    }
+
+    public LocalDate getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDate expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public Long getId() {
