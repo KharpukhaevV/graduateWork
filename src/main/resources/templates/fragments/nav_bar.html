@@ -12,9 +12,6 @@
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <!--    <form method="GET" action="/transfer" style="margin: 10px">-->
-    <!--        <button type="submit" class="btn btn-sm btn-outline-success">Платежи</button>-->
-    <!--    </form>-->
     <div class="dropdown show">
         <a class="btn btn-sm btn-outline-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -31,7 +28,7 @@
     <form method="GET" action="/" style="margin: 10px">
         <button type="submit" class="btn btn-sm btn-outline-success">Вклады</button>
     </form>
-    <span th:if="${#lists.contains(client.getRoles(), admin) or #lists.contains(client.getRoles(), moder)}">|</span>
+    <span>|</span>
     <form method="GET" action="/admin" style="margin: 10px" th:if="${#lists.contains(client.getRoles(), admin)}">
         <button type="submit" class="btn btn-sm btn-outline-success">Панель администратора</button>
     </form>

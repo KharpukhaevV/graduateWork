@@ -23,10 +23,11 @@
         </div>
     </div>
     <hr>
-    <div class="row" style="margin-top: 30px">
-        <div class="col-3">
-            <h5>Подать заявку на кредит</h5>
+    <div class="row" style="margin-top: 30px; text-align: center">
+        <div class="col-4">
+            <h5>Подать заявку на кредитную карту</h5>
             <form method="POST" class="form-floating mb-2" style="margin-top: 10px" action="/credit">
+                <p>Срок, лимит и процент карты определяет оператор</p>
                 <p>Выберете валюту</p>
                 <div class="btn-group" style="width: 250px;">
                     <input type="radio" class="btn-check" name="currency" id="option1" autocomplete="off" value="RUB"/>
@@ -41,8 +42,31 @@
                 <button type="submit" class="btn btn-outline-primary" style="width: 250px; margin-top: 10px">Оформить
                     заявку
                 </button>
-                </form>
-            </div>
+            </form>
+        </div>
+        <div class="col">
+
+            <h5>Активные кредиты по картам</h5>
+            <table class="table" style="margin-top: 40px">
+                <tr>
+                    <th scope="col">Карта</th>
+                    <th scope="col">Сумма</th>
+                    <th scope="col">Процент</th>
+                    <th scope="col">Дата окончания</th>
+                    <th scope="col">Статус</th>
+                </tr>
+                <tr th:each="credit : ${credits}">
+                    <td th:text="${credit.getCard().getAccount().getNumber()}"></td>
+                    <td th:text="${credit.getSum()}"></td>
+                    <td th:text="${credit.getCard().getCreditBid().getPercent()}"></td>
+                    <td th:text="${credit.getExpirationDate()}"></td>
+                    <td th:text="${credit.getCreditStatus()}"></td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <div class="row" style="margin-top: 50px">
         <div class="col">
             <div th:if="${not #lists.isEmpty(client.getCredits())}">
                 <h5>Активные заявки</h5>
@@ -83,26 +107,6 @@
             <div th:if="${#lists.isEmpty(client.getCredits())}">
                 <h5>Активных заявок нет</h5>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <table class="table" style="margin-top: 40px">
-                <tr>
-                    <th scope="col">Карта</th>
-                    <th scope="col">Сумма</th>
-                    <th scope="col">Процент</th>
-                    <th scope="col">Дата окончания</th>
-                    <th scope="col">Статус</th>
-                </tr>
-                <tr th:each="credit : ${credits}">
-                    <td th:text="${credit.getCard().getAccount().getNumber()}"></td>
-                    <td th:text="${credit.getSum()}"></td>
-                    <td th:text="${credit.getCard().getCreditBid().getPercent()}"></td>
-                    <td th:text="${credit.getExpirationDate()}"></td>
-                    <td th:text="${credit.getCreditStatus()}"></td>
-                </tr>
-            </table>
         </div>
     </div>
 </div>

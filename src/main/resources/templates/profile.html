@@ -76,7 +76,7 @@
     <hr>
     <div class="row align-items-start justify-content-start" style="margin-top: 50px"
          th:if="${not #lists.isEmpty(client.getExpenses()) or not #lists.isEmpty(client.getReceiving())}">
-        <h4 style="margin-bottom: 40px">История платежей</h4>
+        <h4 style="margin-bottom: 40px">История операций</h4>
         <div class="col-6 align-self-start">
             <h5>Расходы</h5>
             <table class="table">
@@ -88,7 +88,7 @@
                 </tr>
                 <tr th:each="transferEntity : ${client.getExpenses()}">
                     <td th:text="${transferEntity.getDate()}"></td>
-                    <td th:text="${transferEntity.getRecipient().getClient()}"></td>
+                    <td th:text="${transferEntity.getRecipient()}"></td>
                     <td th:text="${transferEntity.getTransferSum()}"></td>
                     <td th:text="${transferEntity.getStatus()}"></td>
                 </tr>
@@ -106,7 +106,7 @@
                 </tr>
                 <tr th:each="transferEntity : ${client.getReceiving()}">
                     <td th:text="${transferEntity.getDate()}"></td>
-                    <td th:text="${transferEntity.getSender().getClient()}"></td>
+                    <td th:text="${transferEntity.getSender()}"></td>
                     <td th:text="${transferEntity.getTransferSum()}"></td>
                     <td th:text="${transferEntity.getStatus()}"></td>
                 </tr>

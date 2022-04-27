@@ -10,41 +10,44 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class SchedulingService {
+public class SchedulingCreditService {
 
     private final CreditRepository creditRepository;
 
-    public SchedulingService(CreditRepository creditRepository) {
+    public SchedulingCreditService(CreditRepository creditRepository) {
         this.creditRepository = creditRepository;
     }
 
-    @Scheduled(cron = "0 29 17 * * *")
+    @Scheduled(cron = "59 * * * * *")
     public void checkStatus() {
         List<CreditEntity> creditsList = creditRepository.findAllByCreditStatus(CreditStatus.ACTIVE);
         for (CreditEntity credit : creditsList) {
             if (credit.getExpirationDate().isBefore(LocalDate.now())) {
                 if (credit.getCard().getAccount().getBalance() < credit.getCard().getCreditBid().getLimitCard()) {
                     credit.setCreditStatus(CreditStatus.OVERDUE);
+                    creditRepository.save(credit);
                 } else {
                     credit.setCreditStatus(CreditStatus.CLOSED);
+                    creditRepository.save(credit);
                 }
             }
-            creditRepository.save(credit);
         }
     }
 
-    @Scheduled(cron = "0 29 17 * * *")
+    @Scheduled(cron = "59 * * * * *")
     public void checkPenalties() {
         List<CreditEntity> creditsList = creditRepository.findAllByCreditStatus(CreditStatus.OVERDUE);
         for (CreditEntity credit : creditsList) {
             if (credit.getCard().getAccount().getBalance() < credit.getCard().getCreditBid().getLimitCard() + (credit.getSum() / 100 * credit.getPenalties())) {
                 if (credit.getPenalties() < 40) {
                     credit.setPenalties(credit.getPenalties() + 1);
+                    credit.setSum(credit.getSum() + (credit.getSum() / 100 * credit.getPenalties()));
+                    creditRepository.save(credit);
                 }
             } else {
                 credit.setCreditStatus(CreditStatus.CLOSED);
+                creditRepository.save(credit);
             }
-            creditRepository.save(credit);
         }
     }
 

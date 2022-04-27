@@ -12,7 +12,7 @@ public class CreditBid {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "card_id", unique = true, nullable = false)
+    @Column(name = "bid_id", unique = true, nullable = false)
     private Long id;
 
     @ManyToOne
@@ -33,7 +33,7 @@ public class CreditBid {
 
     private LocalDate expirationDate;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "card_id")
     private Card card;
 

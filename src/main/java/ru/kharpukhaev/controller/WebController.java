@@ -6,11 +6,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.*;
 import ru.kharpukhaev.entity.enums.*;
-import ru.kharpukhaev.exceptions.InsufficientFunds;
-import ru.kharpukhaev.exceptions.RecipientNotFound;
+import ru.kharpukhaev.exceptions.InsufficientFundsException;
+import ru.kharpukhaev.exceptions.RecipientNotFoundException;
 import ru.kharpukhaev.repository.*;
 import ru.kharpukhaev.services.ClientCredit;
-import ru.kharpukhaev.services.Transfer;
+import ru.kharpukhaev.services.TransferService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -29,7 +29,7 @@ public class WebController {
     private final CreditRepository creditRepository;
 
     private final ClientCredit clientCredit;
-    private final Transfer transfer;
+    private final TransferService transferService;
 
     private Client client;
 
@@ -40,7 +40,7 @@ public class WebController {
                          AccountRepository accountRepository,
                          CreditRepository creditRepository,
                          ClientCredit clientCredit,
-                         Transfer transfer) {
+                         TransferService transferService) {
         this.clientRepository = clientRepository;
         this.transferRepository = transferRepository;
         this.cardRepository = cardRepository;
@@ -48,7 +48,7 @@ public class WebController {
         this.accountRepository = accountRepository;
         this.creditRepository = creditRepository;
         this.clientCredit = clientCredit;
-        this.transfer = transfer;
+        this.transferService = transferService;
     }
 
     @GetMapping
@@ -111,8 +111,8 @@ public class WebController {
     }
 
     @PostMapping("/transfer/do_transfer")
-    public String doTransferToClient(@RequestParam Account sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFunds {
-        transfer.doTransfer(sender, recipient, sum);
+    public String doTransferToClient(@RequestParam Account sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFundsException {
+        transferService.doTransfer(sender, recipient, sum);
         return "redirect:/profile";
     }
 
@@ -125,8 +125,8 @@ public class WebController {
     }
 
     @PostMapping("/transfer/between_their")
-    public String doTransferBetweenTheir(@RequestParam Account sender, @RequestParam Account recipient, @RequestParam long sum) throws InsufficientFunds {
-        transfer.transferBetweenTheir(sender, recipient, sum);
+    public String doTransferBetweenTheir(@RequestParam Account sender, @RequestParam Account recipient, @RequestParam long sum) throws InsufficientFundsException {
+        transferService.transferBetweenTheir(sender, recipient, sum);
         return "redirect:/profile";
     }
 
@@ -161,15 +161,15 @@ public class WebController {
         return "redirect:/credit";
     }
 
-    @ExceptionHandler(InsufficientFunds.class)
-    public String handleInsufficientFunds(InsufficientFunds e, Model model) {
+    @ExceptionHandler(InsufficientFundsException.class)
+    public String handleInsufficientFunds(InsufficientFundsException e, Model model) {
         model.addAttribute("errors", e.getMessage());
         return "123123";
 //        return "/" + e.getSender().getLogin() + "/card_transfer";
     }
 
-    @ExceptionHandler(RecipientNotFound.class)
-    public String handleRecipientNotFound(RecipientNotFound e, Model model) {
+    @ExceptionHandler(RecipientNotFoundException.class)
+    public String handleRecipientNotFound(RecipientNotFoundException e, Model model) {
         return "";
     }
 
@@ -177,8 +177,8 @@ public class WebController {
     /*
     TODO
     Почистить котролеры
-    Реализовать переводы карта счет и тд
-    Реализовать OperatorCheck
+    Транзакции
+    Исключения
      */
 
 }

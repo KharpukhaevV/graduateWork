@@ -28,7 +28,8 @@ public class OperatorCheck {
     }
 
     public void paymentAccept(TransferEntity transferEntity) {
-        Account accountRecipient = transferEntity.getRecipient();
+        String numberAccountRecipient = transferEntity.getAccountRecipient();
+        Account accountRecipient = accountRepository.findAccountByNumber(numberAccountRecipient);
         accountRecipient.setBalance(accountRecipient.getBalance() + transferEntity.getTransferSum());
         transferEntity.setStatus(TransferStatus.SUCCESS);
         transferRepository.save(transferEntity);
@@ -36,7 +37,8 @@ public class OperatorCheck {
     }
 
     public void paymentDecline(TransferEntity transferEntity) {
-        Account accountSender = transferEntity.getRecipient();
+        String numberAccountSender = transferEntity.getAccountRecipient();
+        Account accountSender = accountRepository.findAccountByNumber(numberAccountSender);
         accountSender.setBalance(accountSender.getBalance() + transferEntity.getTransferSum());
         transferEntity.setStatus(TransferStatus.BLOCKED);
         transferRepository.save(transferEntity);
@@ -45,8 +47,7 @@ public class OperatorCheck {
 
     public void makeCreditOffer(CreditBid creditBid, long limit, double percent, LocalDate date) {
         creditBid.setLimitCard(limit);
-        creditBid.setPercent(percent / 100);
-//        creditBid.setStartDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        creditBid.setPercent(percent);
         creditBid.setStartDate(LocalDate.now());
         creditBid.setExpirationDate(date);
         creditBid.setStatus(CreditBidStatus.OFFERED);

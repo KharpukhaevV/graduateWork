@@ -17,8 +17,8 @@ public class CreditEntity {
 
     private Long sum;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "card_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 
     private LocalDate expirationDate;
@@ -34,12 +34,13 @@ public class CreditEntity {
     public CreditEntity(Long sum, Card card) {
         this.sum = sum;
         this.card = card;
+        this.penalties = 0L;
         this.creditStatus = CreditStatus.ACTIVE;
         LocalDate localDate = LocalDate.now().plusMonths(1);
         if (localDate.isBefore(card.getCreditBid().getExpirationDate())) {
             this.expirationDate = LocalDate.now().plusMonths(1);
         } else {
-            this.expirationDate = card.getCreditBid().getExpirationDate();
+            this.expirationDate = card.getCreditBid().getExpirationDate().plusDays(1);
         }
     }
 

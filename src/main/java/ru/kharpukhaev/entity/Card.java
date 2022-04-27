@@ -5,6 +5,7 @@ import ru.kharpukhaev.entity.enums.CardType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "cards")
@@ -26,8 +27,11 @@ public class Card {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card", orphanRemoval = true)
     private CreditBid creditBid;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card", orphanRemoval = true)
+    private Set<CreditEntity> credits;
 
     private LocalDate expirationDate;
 
@@ -79,6 +83,14 @@ public class Card {
 
     public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public Set<CreditEntity> getCredits() {
+        return credits;
+    }
+
+    public void setCredits(Set<CreditEntity> credits) {
+        this.credits = credits;
     }
 
     public Long getId() {

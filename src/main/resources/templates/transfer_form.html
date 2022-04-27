@@ -87,39 +87,6 @@
             </div>
         </form>
     </div>
-
-    <!--        <div class="col-3 align-self-start" th:if="${#httpServletRequest.requestURI == '/transfer/between_their'}">-->
-    <!--            <form method="POST" class="form-floating mb-3" style="padding-left: 10px" action="/transfer/between_their">-->
-    <!--                <h3>Перевод между своими счетами</h3>-->
-    <!--                <p>Выберете карту</p>-->
-    <!--                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">-->
-    <!--                    <input  type="radio" class="btn-check" name="sender" th:id="'s' + ${iter}" autocomplete="off" th:value="${card.getId()}"/>-->
-    <!--                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="'s' + ${iter}">-->
-    <!--                        <span th:text="'Карта ' + ${card.getNumber()}"></span>-->
-    <!--                        <br>-->
-    <!--                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>-->
-    <!--                    </label>-->
-    <!--                </div>-->
-    <!--                <hr>-->
-    <!--                <div class="btn-group-vertical" th:each="card, iter : ${client.getCards()}">-->
-    <!--                    <input  type="radio" class="btn-check" name="recipient" th:id="'r' + ${iter}" autocomplete="off" th:value="${card.getId()}"/>-->
-    <!--                    <label style="margin-top: 5px; margin-bottom: 5px; width: 295px;" class="btn btn-outline-success" th:for="'r' + ${iter}">-->
-    <!--                        <span th:text="'Карта ' + ${card.getNumber()}"></span>-->
-    <!--                        <br>-->
-    <!--                        <span th:text="'Баланс: ' + ${card.getBalance()}"></span>-->
-    <!--                    </label>-->
-    <!--                </div>-->
-    <!--                <div>-->
-    <!--                    <label for="sum">Сумма перевода</label>-->
-    <!--                    <input type="text" class="form-control" name="sum" id="sum" >-->
-    <!--                </div>-->
-    <!--                <button type="submit" class="btn btn-success" style="margin: 10px">Перевести</button>-->
-    <!--            </form>-->
-    <!--            <form method="GET" action="/transfer" style="margin-top: 10px">-->
-    <!--                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>-->
-    <!--            </form>-->
-    <!--        </div>-->
-    <!--    </div>-->
 </div>
 <hr>
 

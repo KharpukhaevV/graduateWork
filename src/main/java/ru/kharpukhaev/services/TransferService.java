@@ -1,41 +1,37 @@
 package ru.kharpukhaev.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.kharpukhaev.entity.Account;
-import ru.kharpukhaev.entity.CreditEntity;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.CardType;
 import ru.kharpukhaev.entity.enums.TransferStatus;
-import ru.kharpukhaev.exceptions.InsufficientFunds;
-import ru.kharpukhaev.exceptions.RecipientNotFound;
+import ru.kharpukhaev.exceptions.InsufficientFundsException;
+import ru.kharpukhaev.exceptions.RecipientNotFoundException;
 import ru.kharpukhaev.repository.AccountRepository;
-import ru.kharpukhaev.repository.CreditRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 
 @Component
-public class Transfer {
+public class TransferService {
     private final Commissions commissions;
     private final FrodMonitor frodMonitor;
     private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
 
-    private final CreditRepository creditRepository;
+    private final CreditService creditService;
 
-    @Autowired
-    public Transfer(Commissions commissions,
-                    FrodMonitor frodMonitor,
-                    TransferRepository transferRepository,
-                    AccountRepository accountRepository,
-                    CreditRepository creditRepository) {
+    public TransferService(Commissions commissions,
+                           FrodMonitor frodMonitor,
+                           TransferRepository transferRepository,
+                           AccountRepository accountRepository,
+                           CreditService creditService) {
         this.commissions = commissions;
         this.frodMonitor = frodMonitor;
         this.transferRepository = transferRepository;
         this.accountRepository = accountRepository;
-        this.creditRepository = creditRepository;
+        this.creditService = creditService;
     }
 
-    public void doTransfer(Account sender, String recipientNumber, long sum) throws InsufficientFunds {
+    public void doTransfer(Account sender, String recipientNumber, long sum) throws InsufficientFundsException {
         if (sender.getNumber().substring(0, 6).equals(recipientNumber.substring(0, 6))) {
             transferToClient(sender, recipientNumber, sum);
         } else {
@@ -47,7 +43,7 @@ public class Transfer {
         checkSum(accountSender, sum);
         Account accountRecipient = checkRecipient(recipientNumber);
         if (accountSender.getCard().getType().equals(CardType.CREDIT)) {
-            creditRepository.save(new CreditEntity(sum, accountSender.getCard()));
+            creditService.addCredit(sum, accountSender.getCard());
         }
         TransferEntity transferEntity = new TransferEntity(accountSender, accountRecipient, sum);
         accountSender.setBalance(accountSender.getBalance() - sum);
@@ -63,6 +59,9 @@ public class Transfer {
         Account accountRecipient = checkRecipient(recipientNumber);
         long sumWithCommission = commissions.checkCommission(accountRecipient, sum) + sum;
         checkSum(accountSender, sumWithCommission);
+        if (accountSender.getCard().getType().equals(CardType.CREDIT)) {
+            creditService.addCredit(sumWithCommission, accountSender.getCard());
+        }
         TransferEntity transferEntity = new TransferEntity(accountSender, accountRecipient, sum);
         accountSender.setBalance(accountSender.getBalance() - sumWithCommission);
         accountRepository.save(accountSender);
@@ -75,7 +74,7 @@ public class Transfer {
     public void transferBetweenTheir(Account sender, Account recipient, long sum) {
         checkSum(sender, sum);
         if (sender.getCard().getType().equals(CardType.CREDIT)) {
-            creditRepository.save(new CreditEntity(sum, sender.getCard()));
+            creditService.addCredit(sum, sender.getCard());
         }
         sender.setBalance(sender.getBalance() - sum);
         recipient.setBalance(recipient.getBalance() + sum);
@@ -86,16 +85,16 @@ public class Transfer {
         transferRepository.save(transferEntity);
     }
 
-    private void checkSum(Account sender, long sum) throws InsufficientFunds {
+    private void checkSum(Account sender, long sum) throws InsufficientFundsException {
         if (sum > sender.getBalance()) {
-            throw new InsufficientFunds("Недостаточно средств.", sender);
+            throw new InsufficientFundsException("Недостаточно средств.", sender);
         }
     }
 
-    private Account checkRecipient(String recipientNumber) throws RecipientNotFound {
+    private Account checkRecipient(String recipientNumber) throws RecipientNotFoundException {
         Account recipient = accountRepository.findAccountByNumber(recipientNumber);
         if (recipient == null) {
-            throw new RecipientNotFound("Получатель с таким номером не найден");
+            throw new RecipientNotFoundException("Получатель с таким номером не найден");
         }
         return recipient;
     }

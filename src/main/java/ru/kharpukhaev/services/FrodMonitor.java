@@ -1,6 +1,5 @@
 package ru.kharpukhaev.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.TransferStatus;
@@ -11,7 +10,6 @@ public class FrodMonitor {
 
     private final TransferRepository transferRepository;
 
-    @Autowired
     public FrodMonitor(TransferRepository transferRepository) {
         this.transferRepository = transferRepository;
     }

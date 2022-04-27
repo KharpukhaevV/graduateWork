@@ -20,44 +20,36 @@ public class Client implements UserDetails {
     @Column(name = "client_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "username")
     @NotEmpty
     @Size(min = 2, max = 16)
     private String username;
 
-    @Column(name = "password")
     @NotEmpty
     @Size(min = 4, max = 16)
     private String password;
 
-    @Column(name = "firstname")
     @NotEmpty
     @Size(min = 2, max = 16)
     private String firstname;
 
-    @Column(name = "lastname")
     @NotEmpty
     @Size(min = 2, max = 16)
     private String lastname;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)
     private Set<Card> cards;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)
     private Set<Account> accounts;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "sender")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "sender", orphanRemoval = true)
     private Set<TransferEntity> expenses;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "recipient")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "recipient", orphanRemoval = true)
     private Set<TransferEntity> receiving;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client")
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)
     private Set<CreditBid> creditBids;
-
-
-    @Column(name = "balance")
-    private long balance;
 
     private boolean active;
 
@@ -135,14 +127,6 @@ public class Client implements UserDetails {
 
     public void setCards(Set<Card> card) {
         this.cards = card;
-    }
-
-    public long getBalance() {
-        return balance;
-    }
-
-    public void setBalance(long balance) {
-        this.balance = balance;
     }
 
     public Set<Role> getRoles() {
