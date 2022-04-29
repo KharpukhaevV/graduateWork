@@ -20,7 +20,7 @@
                     <tr th:each="client : ${clients}">
                         <td th:text="${client}"></td>
                         <td th:text="${client.getRoles()}"></td>
-                        <td><a th:href="@{/admin/{id}(id=${client.getId()})}">Edit</a></td>
+                        <td><a th:href="@{/admin/edit/{id}(id=${client.getId()})}">Edit</a></td>
                     </tr>
                 </table>
             </div>

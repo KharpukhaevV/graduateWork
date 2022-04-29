@@ -25,16 +25,15 @@ public class AdminController {
         return "admin";
     }
 
-    @GetMapping("{client}")
+    @GetMapping("edit/{client}")
     public String clientEdit(@PathVariable Client client, Model model) {
         model.addAttribute("client", client);
         model.addAttribute("roles", Role.values());
         return "clientEdit";
     }
 
-    @PostMapping("/client")
+    @PostMapping("/edit")
     public String clientSave(@RequestParam("clientId") Client client, @RequestParam("roles") Set<Role> roles) {
-
         client.setRoles(roles);
         clientRepository.save(client);
         return "redirect:/admin";

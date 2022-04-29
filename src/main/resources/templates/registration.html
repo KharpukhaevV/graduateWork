@@ -15,11 +15,13 @@
             <form method="POST" th:action="@{/registration}" th:object="${client}">
                 <label for="login" style="color: red;" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></label>
                 <div class="mb-3"><label> Логин : <input type="text" id="login" th:field="*{username}" class="form-control"/> </label></div>
-                <label for="login" style="color: red;" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}"></label>
+                <label for="firstname" style="color: red;" th:if="${#fields.hasErrors('firstname')}"
+                       th:errors="*{firstname}"></label>
                 <div class="mb-3"><label> Имя : <input type="text" id="firstname" th:field="*{firstname}" class="form-control"/> </label></div>
-                <label for="login" style="color: red;" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}"></label>
+                <label for="lastname" style="color: red;" th:if="${#fields.hasErrors('lastname')}"
+                       th:errors="*{lastname}"></label>
                 <div class="mb-3"><label> Фамилия : <input type="text" id="lastname" th:field="*{lastname}" class="form-control"/> </label></div>
-                <label for="login" style="color: red;" th:if="${#fields.hasErrors('password')}"
+                <label for="password" style="color: red;" th:if="${#fields.hasErrors('password')}"
                        th:errors="*{password}"></label>
                 <div class="mb-3"><label> Пароль: <input type="password" id="password" th:field="*{password}" class="form-control"/> </label></div>
                 <div class="mb-3"><input type="submit" value="Регистрация" class="btn btn-primary"/></div>

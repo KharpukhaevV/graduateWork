@@ -23,6 +23,7 @@
             <div class="col-12">
                 <h5>Перевод на карту или счет</h5>
                 <p>Выберете вашу карту/счет</p>
+                <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}" th:errors="*{accountSender}"></p>
                 <div class="btn-group" role="group">
                     <div th:each="account, iter : ${client.getAccounts()}">
                         <input type="radio" class="btn-check" th:field="*{accountSender}" th:id="${iter}" autocomplete="off"
@@ -35,17 +36,21 @@
                         </label>
                     </div>
                 </div>
-                <label style="color: red;" th:if="${#fields.hasErrors('accountSender')}" th:errors="*{accountSender}"></label>
             </div>
             <div class="col-3">
                 <label for="recipientId">Номер карты/счета получателя</label>
-                <label for="recipientId" style="color: red;" th:if="${#fields.hasErrors('accountRecipient')}" th:errors="*{accountRecipient}"></label>
+                <label for="recipientId" style="color: red;" th:if="${#fields.hasErrors('accountRecipient')}"
+                       th:errors="*{accountRecipient}"></label>
                 <input type="text" class="form-control" th:field="*{accountRecipient}" id="recipientId">
             </div>
             <div class="col-3">
                 <label for="sum">Сумма перевода</label>
-                <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}" th:errors="*{transferSum}"></label>
+                <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}"
+                       th:errors="*{transferSum}"></label>
                 <input type="text" class="form-control" th:field="*{transferSum}" id="sum">
+            </div>
+            <div th:if="${#fields.hasErrors('global')}">
+                <p th:each="err : ${#fields.errors('global')}" th:text="${err}" style="color: red"></p>
             </div>
             <div class="col-3">
                 <button type="submit" class="btn btn-outline-success" style="margin-top: 10px">Перевести</button>
@@ -55,13 +60,15 @@
 
 
     <div class="row" th:if="${#httpServletRequest.requestURI == '/transfer/between_their'}">
-        <form method="POST" class="form-floating" action="/transfer/between_their">
+        <form method="POST" class="form-floating" th:action="@{/transfer/between_their}" th:object="${transfer}">
             <div class="col-12">
                 <h5>Перевод между своими счетами</h5>
                 <p>Выберете ваш счет для отправки</p>
+                <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}" th:errors="*{accountSender}"></p>
                 <div class="btn-group" role="group" th:each="account, iter : ${client.getAccounts()}">
-                    <input type="radio" class="btn-check" name="sender" th:id="${'s' + iter}" autocomplete="off"
-                           th:value="${account.getId()}"/>
+                    <input type="radio" class="btn-check" th:field="*{accountSender}" th:id="${'s' + iter}"
+                           autocomplete="off"
+                           th:value="${account.getNumber()}"/>
                     <label style="width: 210px;" class="btn btn-outline-success" th:for="${'s' + iter}">
                         <span th:text="${account.getNumber()}"></span>
                         <br>
@@ -71,9 +78,12 @@
             </div>
             <div class="col-12">
                 <p>Выберете ваш счет для получения</p>
+                <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}"
+                   th:errors="*{accountRecipient}"></p>
                 <div class="btn-group" role="group" th:each="account, iter : ${client.getAccounts()}">
-                    <input type="radio" class="btn-check" name="recipient" th:id="${'r' + iter}" autocomplete="off"
-                           th:value="${account.getId()}"/>
+                    <input type="radio" class="btn-check" th:field="*{accountRecipient}" th:id="${'r' + iter}"
+                           autocomplete="off"
+                           th:value="${account.getNumber()}"/>
                     <label style="width: 210px;" class="btn btn-outline-success" th:for="${'r' + iter}">
                         <span th:text="${account.getNumber()}"></span>
                         <br>
@@ -83,7 +93,12 @@
             </div>
             <div class="col-3">
                 <label for="sum">Сумма перевода</label>
-                <input type="text" class="form-control" name="sum" id="sum">
+                <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}"
+                       th:errors="*{transferSum}"></label>
+                <input type="text" class="form-control" th:field="*{transferSum}" id="sum">
+            </div>
+            <div th:if="${#fields.hasErrors('global')}">
+                <p th:each="err : ${#fields.errors('global')}" th:text="${err}" style="color: red"></p>
             </div>
             <div class="col-3">
                 <button type="submit" class="btn btn-outline-success" style="margin-top: 10px">Перевести</button>

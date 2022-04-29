@@ -21,6 +21,7 @@
                         <th scope="col">Срок до</th>
                         <th scope="col">Валюта</th>
                         <th scope="col"></th>
+                        <th scope="col"></th>
                     </tr>
                     <tr th:each="creditBid : ${credits}">
                         <form method="POST" action="/operator/offer">
@@ -40,6 +41,12 @@
                                 <button type="submit" class="btn btn-sm btn-outline-success">Предложить</button>
                             </td>
                         </form>
+                        <td>
+                            <form method="POST" action="/operator/offer_decline">
+                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Отклонить</button>
+                            </form>
+                        </td>
                     </tr>
                 </table>
             </div>

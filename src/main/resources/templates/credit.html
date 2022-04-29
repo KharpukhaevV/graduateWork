@@ -89,13 +89,13 @@
                         <td th:text="${creditBid.getCurrency()}"></td>
                         <td th:text="${creditBid.getStatus()}"></td>
                         <td th:if="${status.equals(creditBid.getStatus())}">
-                            <form method="POST" action="/accept">
+                            <form method="POST" action="/credit/accept">
                                 <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
                                 <input type="submit" value="Принять" id="accept" class="btn btn-sm btn-outline-success">
                             </form>
                         </td>
                         <td th:if="${status.equals(creditBid.getStatus())}">
-                            <form method="POST" action="/decline">
+                            <form method="POST" action="/credit/decline">
                                 <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
                                 <input type="submit" value="Отклонить" id="decline"
                                        class="btn btn-sm btn-outline-danger">

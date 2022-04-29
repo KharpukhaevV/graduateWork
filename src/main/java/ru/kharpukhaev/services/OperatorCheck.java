@@ -53,4 +53,9 @@ public class OperatorCheck {
         creditBid.setStatus(CreditBidStatus.OFFERED);
         creditBidRepository.save(creditBid);
     }
+
+    public void decline(CreditBid creditBid) {
+        creditBid.setStatus(CreditBidStatus.REJECTED);
+        creditBidRepository.save(creditBid);
+    }
 }

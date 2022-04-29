@@ -58,7 +58,6 @@ public class Client implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-
     @Override
     public boolean isAccountNonExpired() {
         return true;

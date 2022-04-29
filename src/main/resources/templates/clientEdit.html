@@ -10,19 +10,19 @@
 
 <div class="container">
     <div class="row">
-        <div class="col">
-            <form action="/admin/client" method="POST">
-                <input type="text" th:value="${client}">
+        <div class="col-6">
+            <form action="/admin/edit" method="POST" class="form-floating" style="text-align: left">
+                <h5 th:text="${client}"></h5>
+                <h6>Выберете роли:</h6>
                 <div th:each="role, iter : ${roles}">
                     <label th:for="${iter}" th:text="${role}"></label>
                     <input type="checkbox" name="roles" th:id="${iter}" th:value="${role}">
                 </div>
                 <input type="hidden" name="clientId" th:value="${client.getId()}">
-                <input type="hidden" th:value="${_csrf}">
-                <button type="submit">Сохранить</button>
+                <button type="submit" class="btn btn-outline-success">Сохранить</button>
             </form>
             <form method="GET" action="/admin" style="margin-top: 10px">
-                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
+                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 250px;">Назад</button>
             </form>
         </div>
     </div>

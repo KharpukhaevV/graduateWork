@@ -3,10 +3,7 @@ package ru.kharpukhaev.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.CreditBid;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
@@ -61,7 +58,7 @@ public class OperatorController {
     }
 
     @GetMapping("/credits")
-    public String credits(Model model) {
+    public String credits(@ModelAttribute("creditBid") CreditBid creditBid, Model model) {
         model.addAttribute("credits", creditBidRepository.findAllByStatus(CreditBidStatus.PROCESSED));
         model.addAttribute("currentDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         return "operator_credits";
@@ -70,6 +67,12 @@ public class OperatorController {
     @PostMapping("/offer")
     public String creditOffer(@RequestParam CreditBid creditBid, @RequestParam long limit, @RequestParam double percent, @RequestParam String date) {
         operatorCheck.makeCreditOffer(creditBid, limit, percent, LocalDate.parse(date));
+        return "redirect:/operator/credits";
+    }
+
+    @PostMapping("/offer_decline")
+    public String declineOffer(@RequestParam CreditBid creditBid) {
+        operatorCheck.decline(creditBid);
         return "redirect:/operator/credits";
     }
 }
