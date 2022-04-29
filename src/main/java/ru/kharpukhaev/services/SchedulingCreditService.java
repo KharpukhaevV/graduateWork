@@ -18,7 +18,7 @@ public class SchedulingCreditService {
         this.creditRepository = creditRepository;
     }
 
-    @Scheduled(cron = "59 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void checkStatus() {
         List<CreditEntity> creditsList = creditRepository.findAllByCreditStatus(CreditStatus.ACTIVE);
         for (CreditEntity credit : creditsList) {
@@ -34,7 +34,7 @@ public class SchedulingCreditService {
         }
     }
 
-    @Scheduled(cron = "59 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void checkPenalties() {
         List<CreditEntity> creditsList = creditRepository.findAllByCreditStatus(CreditStatus.OVERDUE);
         for (CreditEntity credit : creditsList) {

@@ -103,7 +103,7 @@ public class WebController {
     }
 
     @GetMapping("/transfer/do_transfer")
-    public String transferToClient(Model model) {
+    public String transferToClient(@ModelAttribute("transfer") TransferEntity transferEntity, Model model) {
         model.addAttribute("client", client);
         model.addAttribute("admin", Role.ADMIN);
         model.addAttribute("moder", Role.MODERATOR);
@@ -111,8 +111,14 @@ public class WebController {
     }
 
     @PostMapping("/transfer/do_transfer")
-    public String doTransferToClient(@RequestParam Account sender, @RequestParam String recipient, @RequestParam long sum) throws InsufficientFundsException {
-        transferService.doTransfer(sender, recipient, sum);
+    public String doTransferToClient(@ModelAttribute("transfer") @Valid TransferEntity transferEntity, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("client", client);
+            model.addAttribute("admin", Role.ADMIN);
+            model.addAttribute("moder", Role.MODERATOR);
+            return "transfer_form";
+        }
+        transferService.doTransfer(transferEntity.getAccountSender(), transferEntity.getAccountRecipient(), transferEntity.getTransferSum());
         return "redirect:/profile";
     }
 
@@ -177,6 +183,8 @@ public class WebController {
     /*
     TODO
     Почистить котролеры
+    Валидация форм
+    https://www.baeldung.com/spring-thymeleaf-error-messages
     Транзакции
     Исключения
      */

@@ -31,7 +31,8 @@ public class TransferService {
         this.creditService = creditService;
     }
 
-    public void doTransfer(Account sender, String recipientNumber, long sum) throws InsufficientFundsException {
+    public void doTransfer(String senderNumber, String recipientNumber, long sum) throws InsufficientFundsException {
+        Account sender = accountRepository.findAccountByNumber(senderNumber);
         if (sender.getNumber().substring(0, 6).equals(recipientNumber.substring(0, 6))) {
             transferToClient(sender, recipientNumber, sum);
         } else {

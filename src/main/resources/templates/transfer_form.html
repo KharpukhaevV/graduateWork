@@ -19,14 +19,14 @@
     </div>
     <hr>
     <div class="row" th:if="${#httpServletRequest.requestURI == '/transfer/do_transfer'}">
-        <form method="POST" class="form-floating" action="/transfer/do_transfer">
+        <form method="POST" class="form-floating" th:action="@{/transfer/do_transfer}" th:object="${transfer}">
             <div class="col-12">
                 <h5>Перевод на карту или счет</h5>
                 <p>Выберете вашу карту/счет</p>
                 <div class="btn-group" role="group">
                     <div th:each="account, iter : ${client.getAccounts()}">
-                        <input type="radio" class="btn-check" name="sender" th:id="${iter}" autocomplete="off"
-                               th:value="${account.getId()}"/>
+                        <input type="radio" class="btn-check" th:field="*{accountSender}" th:id="${iter}" autocomplete="off"
+                               th:value="${account.getNumber()}"/>
                         <label style="width: 210px; margin-right: 5px;" class="btn btn-outline-success"
                                th:for="${iter}">
                             <span th:text="${account.getNumber()}"></span>
@@ -35,14 +35,17 @@
                         </label>
                     </div>
                 </div>
+                <label style="color: red;" th:if="${#fields.hasErrors('accountSender')}" th:errors="*{accountSender}"></label>
             </div>
             <div class="col-3">
                 <label for="recipientId">Номер карты/счета получателя</label>
-                <input type="text" class="form-control" name="recipient" id="recipientId">
+                <label for="recipientId" style="color: red;" th:if="${#fields.hasErrors('accountRecipient')}" th:errors="*{accountRecipient}"></label>
+                <input type="text" class="form-control" th:field="*{accountRecipient}" id="recipientId">
             </div>
             <div class="col-3">
                 <label for="sum">Сумма перевода</label>
-                <input type="text" class="form-control" name="sum" id="sum">
+                <label for="sum" style="color: red;" th:if="${#fields.hasErrors('transferSum')}" th:errors="*{transferSum}"></label>
+                <input type="text" class="form-control" th:field="*{transferSum}" id="sum">
             </div>
             <div class="col-3">
                 <button type="submit" class="btn btn-outline-success" style="margin-top: 10px">Перевести</button>

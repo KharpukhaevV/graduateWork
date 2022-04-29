@@ -29,7 +29,7 @@ public class SchedulingCardService {
         this.clientRepository = clientRepository;
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void closeCards() {
         Iterable<Card> cards = cardRepository.findAll();
         for (Card card : cards) {

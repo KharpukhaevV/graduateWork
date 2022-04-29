@@ -3,6 +3,8 @@ package ru.kharpukhaev.entity;
 import ru.kharpukhaev.entity.enums.TransferStatus;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,8 +17,10 @@ public class TransferEntity {
     @Column(name = "transfer_id", unique = true, nullable = false)
     private Long id;
 
+    @NotEmpty
     private String accountSender;
 
+    @NotEmpty
     private String accountRecipient;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,7 +31,8 @@ public class TransferEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private Client sender;
 
-    private Long transferSum;
+    @Min(0)
+    private long transferSum;
 
     private String date;
     @Enumerated(EnumType.STRING)
@@ -55,40 +60,16 @@ public class TransferEntity {
         return accountSender;
     }
 
-    public void setAccountSender(String sender) {
-        this.accountSender = sender;
+    public void setAccountSender(String accountSender) {
+        this.accountSender = accountSender;
     }
 
     public String getAccountRecipient() {
         return accountRecipient;
     }
 
-    public void setAccountRecipient(String recipient) {
-        this.accountRecipient = recipient;
-    }
-
-    public long getTransferSum() {
-        return transferSum;
-    }
-
-    public void setTransferSum(long transferSum) {
-        this.transferSum = transferSum;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public TransferStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TransferStatus status) {
-        this.status = status;
+    public void setAccountRecipient(String accountRecipient) {
+        this.accountRecipient = accountRecipient;
     }
 
     public Client getRecipient() {
@@ -107,8 +88,28 @@ public class TransferEntity {
         this.sender = sender;
     }
 
+    public Long getTransferSum() {
+        return transferSum;
+    }
+
     public void setTransferSum(Long transferSum) {
         this.transferSum = transferSum;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public TransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransferStatus status) {
+        this.status = status;
     }
 
     @Override
