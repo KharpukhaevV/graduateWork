@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
@@ -11,8 +12,8 @@
 <div class="container">
 
     <nav th:replace="fragments/nav_bar :: navbar"></nav>
-
-    <div class="row align-items-center justify-content-center" style="margin-top: 50px">
+    <hr>
+    <div class="row align-items-center justify-content-center" style="margin-top: 10px">
 
         <div class="col align-self-center" style="text-align: left">
             <h4 th:text="'Добро пожаловать ' + ${client.toString()}"></h4>
@@ -21,10 +22,10 @@
     <hr>
     <div class="row">
         <div class="col">
-            <form method="GET" action="/add_card" style="margin: 10px">
+            <form method="GET" action="/add_card" style="margin-top: 5px; margin-bottom: 5px">
                 <button type="submit" class="btn btn-sm btn-outline-success">Получить дебетовую карту</button>
             </form>
-            <form method="GET" action="/add_account" style="margin: 10px">
+            <form method="GET" action="/add_account" style="margin-top: 5px; margin-bottom: 5px">
                 <button type="submit" class="btn btn-sm btn-outline-success">Получить счет</button>
             </form>
         </div>

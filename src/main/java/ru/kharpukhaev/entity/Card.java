@@ -2,6 +2,7 @@ package ru.kharpukhaev.entity;
 
 import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.CardType;
+import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class Card {
     }
 
     public Card(CardType type, Client client) {
-        this.account = new Account(AccountType.CHECKING_ACCOUNT, client);
+        this.account = new Account(AccountType.CHECKING_ACCOUNT, client, Currency.RUB);
         this.type = type;
         this.client = client;
         this.expirationDate = LocalDate.now().plusYears(1);

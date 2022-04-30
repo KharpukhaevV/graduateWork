@@ -11,6 +11,7 @@ import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.CardType;
+import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.entity.enums.Role;
 import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.CardRepository;
@@ -64,8 +65,6 @@ public class MainController {
         client = clientRepository.findByUsername(principal.getName());
         model.addAttribute("client", client);
         model.addAttribute("accounts", client.getAccounts().stream().filter(p -> p.getCard() == null).toList());
-        model.addAttribute("admin", Role.ADMIN);
-        model.addAttribute("moder", Role.MODERATOR);
         return "profile";
     }
 
@@ -78,9 +77,9 @@ public class MainController {
 
     @GetMapping("/add_account")
     public String addAccount() {
-        Account account = new Account(AccountType.CHECKING_ACCOUNT, client);
-        Account account1 = new Account(AccountType.CURRENCY_ACCOUNT, client);
-        Account account2 = new Account(AccountType.SAVINGS_ACCOUNT, client);
+        Account account = new Account(AccountType.CHECKING_ACCOUNT, client, Currency.RUB);
+        Account account1 = new Account(AccountType.CURRENCY_ACCOUNT, client, Currency.RUB);
+        Account account2 = new Account(AccountType.SAVINGS_ACCOUNT, client, Currency.RUB);
         accountRepository.save(account);
         accountRepository.save(account1);
         accountRepository.save(account2);

@@ -11,7 +11,6 @@ import ru.kharpukhaev.entity.CreditBid;
 import ru.kharpukhaev.entity.CreditEntity;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.Currency;
-import ru.kharpukhaev.entity.enums.Role;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.CreditBidRepository;
 import ru.kharpukhaev.repository.CreditRepository;
@@ -42,8 +41,6 @@ public class CreditController {
         Iterable<CreditEntity> creditEntities = creditRepository.findAll();
         model.addAttribute("credits", creditEntities);
         model.addAttribute("client", client);
-        model.addAttribute("admin", Role.ADMIN);
-        model.addAttribute("moder", Role.MODERATOR);
         model.addAttribute("status", CreditBidStatus.OFFERED);
         return "credit";
     }

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Вклады</title>
+    <link th:replace="fragments/dependency :: style1">
+    <link th:replace="fragments/dependency :: style2">
+</head>
+<body>
+
+    <div class="container">
+        <nav th:replace="fragments/nav_bar :: navbar"></nav>
+        <hr>
+        <h4>Вклады</h4>
+        <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
+        </form>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <table class="table">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Ставка</th>
+                        <th scope="col">Возможность снятия</th>
+                        <th scope="col">Возможность пополнения</th>
+                        <th scope="col">Срок</th>
+                        <th scope="col">Валюта</th>
+                        <th scope="col">Сумма</th>
+                        <th scope="col">Счет</th>
+                        <th scope="col"></th>
+                    </tr>
+                    <tr th:each="a : ${all}">
+                        <form method="POST" action="/contribution/accept" th:object="${contribution}">
+                            <td th:text="${a.getName()}"></td>
+                            <td th:text="${a.getStake()}">
+                                <input type="hidden" id="stake" th:field="*{stake}" th:value="${a.getStake()}">
+                            </td>
+                            <td th:text="${a.getTakeOff()}">
+                                <input type="hidden" th:field="*{takeOf}" th:value="${a.getTakeOff()}">
+                            </td>
+                            <td th:text="${a.getTopUp()}">
+                                <input type="hidden" th:field="*{takeOf}" th:value="${a.getTopUp()}">
+                            </td>
+                            <td>
+                                <input type="date" id="start" name="term" th:min="${a.getTerm()}">
+                            </td>
+                            <td>
+                                <div th:if="${a.getCurrency()}" >
+                                    <input list="currency" name="currency" placeholder="Выберете валюту"/>
+                                    <datalist id="currency">
+                                        <div th:each="curr : ${currency}">
+                                            <option th:value="${curr}">
+                                        </div>
+                                    </datalist>
+                                </div>
+                                <div th:if="${not a.getCurrency()}">
+                                    <input type="hidden" id="rub" name="currency" th:value="'RUB'">
+                                    <label for="rub">RUB</label>
+                                </div>
+                            </td>
+                            <td><input type="text" th:field="*{sum}">Сумма</td>
+                            <td>
+                                <input list="accounts" name="account" placeholder="Выберете счет"/>
+                                <datalist id="accounts">
+                                    <div th:each="account : ${client.getAccounts()}">
+                                        <option th:value="${account.getNumber()}">
+                                    </div>
+                                </datalist>
+                            </td>
+                            <td>
+                                <input type="hidden" th:field="*{client}" th:value="${client.getId()}">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Оформить</button>
+                            </td>
+                        </form>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <table>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr th:each="con : ${contributions}">
+                        <td th:text="${con.getId()}"></td>
+                        <td th:text="${con.getStake()}"></td>
+                        <td th:text="${con.getCurrency()}"></td>
+                        <td th:text="${con.getTerm()}"></td>
+                        <td th:text="${con.getSum()}"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script th:replace="fragments/dependency :: script1"></script>
+    <script th:replace="fragments/dependency :: script2"></script>
+    <script th:replace="fragments/dependency :: script3"></script>
+</body>
+</html>

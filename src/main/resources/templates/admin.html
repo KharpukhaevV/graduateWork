@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <title>ADMIN</title>
@@ -9,6 +10,13 @@
 <body>
 
     <div class="container">
+        <nav th:replace="fragments/nav_bar :: navbar"></nav>
+        <hr>
+        <h4>Панель администратора</h4>
+        <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
+        </form>
+        <hr>
         <div class="row">
             <div class="col">
                 <table class="table">
@@ -24,9 +32,6 @@
                     </tr>
                 </table>
             </div>
-            <form method="GET" action="/profile" style="margin-top: 10px">
-                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
-            </form>
         </div>
     </div>
 

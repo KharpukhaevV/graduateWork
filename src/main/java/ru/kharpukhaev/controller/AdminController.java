@@ -29,7 +29,7 @@ public class AdminController {
     public String clientEdit(@PathVariable Client client, Model model) {
         model.addAttribute("client", client);
         model.addAttribute("roles", Role.values());
-        return "clientEdit";
+        return "client_edit";
     }
 
     @PostMapping("/edit")

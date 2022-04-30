@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <title>Client edit</title>
@@ -9,6 +10,12 @@
 <body>
 
 <div class="container">
+    <nav th:replace="fragments/nav_bar :: navbar"></nav>
+    <hr>
+    <form method="GET" action="/admin" style="margin-top: 5px; margin-bottom: 5px">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
+    </form>
+    <hr>
     <div class="row">
         <div class="col-6">
             <form action="/admin/edit" method="POST" class="form-floating" style="text-align: left">
@@ -19,10 +26,7 @@
                     <input type="checkbox" name="roles" th:id="${iter}" th:value="${role}">
                 </div>
                 <input type="hidden" name="clientId" th:value="${client.getId()}">
-                <button type="submit" class="btn btn-outline-success">Сохранить</button>
-            </form>
-            <form method="GET" action="/admin" style="margin-top: 10px">
-                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 250px;">Назад</button>
+                <button type="submit" class="btn btn-sm btn-outline-success">Сохранить</button>
             </form>
         </div>
     </div>

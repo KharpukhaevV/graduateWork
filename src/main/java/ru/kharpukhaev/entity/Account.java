@@ -1,6 +1,7 @@
 package ru.kharpukhaev.entity;
 
 import ru.kharpukhaev.entity.enums.AccountType;
+import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
 
@@ -21,6 +22,9 @@ public class Account {
 
     private long balance;
 
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
+
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Card card;
 
@@ -31,10 +35,11 @@ public class Account {
     public Account() {
     }
 
-    public Account(AccountType type, Client client) {
+    public Account(AccountType type, Client client, Currency currency) {
         this.number = "446644" + (1000000000 + (long) (Math.random() * 9999999999L));
         this.type = type;
         this.client = client;
+        this.currency = currency;
     }
 
     public long getId() {
@@ -79,5 +84,13 @@ public class Account {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 }

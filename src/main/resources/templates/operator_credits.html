@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <title>Расмотрение кредитов</title>
@@ -9,8 +10,14 @@
 <body>
 
 <div class="container">
+    <nav th:replace="fragments/nav_bar :: navbar"></nav>
+    <hr>
+    <h4>Кредиты на рассмотрении</h4>
+    <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
+    </form>
+    <hr>
     <div class="row">
-        <h2>Кредиты на рассмотрении</h2>
         <div class="col">
             <div th:if="${not #lists.isEmpty(credits)}">
                 <table class="table">
@@ -53,9 +60,6 @@
             <div th:if="${#lists.isEmpty(credits)}">
                 <h5>Заявки на кредит закончились</h5>
             </div>
-            <form method="GET" action="/profile" style="margin-top: 10px">
-                <button type="submit" class="btn btn-primary" style="width: 250px;">Назад</button>
-            </form>
         </div>
     </div>
 </div>

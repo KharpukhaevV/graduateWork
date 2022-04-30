@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <title>Transfer</title>
@@ -9,14 +10,11 @@
 <body>
 <div class="container">
     <nav th:replace="fragments/nav_bar :: navbar"></nav>
-    <div class="row align-self-start" style="margin-top: 10px;">
-        <div class="col">
-            <h4>Платежи</h4>
-            <form method="GET" action="/profile" style="margin-top: 10px">
-                <button type="submit" class="btn btn-sm btn-outline-primary" style="width: 100px;">Назад</button>
-            </form>
-        </div>
-    </div>
+    <hr>
+    <h4>Платежи</h4>
+    <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+        <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
+    </form>
     <hr>
     <div class="row" th:if="${#httpServletRequest.requestURI == '/transfer/do_transfer'}">
         <form method="POST" class="form-floating" th:action="@{/transfer/do_transfer}" th:object="${transfer}">

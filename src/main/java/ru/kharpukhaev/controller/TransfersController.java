@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
-import ru.kharpukhaev.entity.enums.Role;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.services.TransferService;
 import ru.kharpukhaev.services.TransferValidationService;
@@ -37,8 +36,6 @@ public class TransfersController {
     public String transferToClient(@ModelAttribute("transfer") TransferEntity transferEntity, Principal principal, Model model) {
         client = clientRepository.findByUsername(principal.getName());
         model.addAttribute("client", client);
-        model.addAttribute("admin", Role.ADMIN);
-        model.addAttribute("moder", Role.MODERATOR);
         return "transfer_form";
     }
 
@@ -56,8 +53,6 @@ public class TransfersController {
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("client", client);
-            model.addAttribute("admin", Role.ADMIN);
-            model.addAttribute("moder", Role.MODERATOR);
             return "transfer_form";
         }
         transferService.doTransfer(transferEntity.getAccountSender(), transferEntity.getAccountRecipient(), transferEntity.getTransferSum());
@@ -68,8 +63,6 @@ public class TransfersController {
     public String transferBetweenTheir(@ModelAttribute("transfer") TransferEntity transferEntity, Principal principal, Model model) {
         client = clientRepository.findByUsername(principal.getName());
         model.addAttribute("client", client);
-        model.addAttribute("admin", Role.ADMIN);
-        model.addAttribute("moder", Role.MODERATOR);
         return "transfer_form";
     }
 
@@ -82,8 +75,6 @@ public class TransfersController {
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("client", client);
-            model.addAttribute("admin", Role.ADMIN);
-            model.addAttribute("moder", Role.MODERATOR);
             return "transfer_form";
         }
         transferService.transferBetweenTheir(transferEntity.getAccountSender(), transferEntity.getAccountRecipient(), transferEntity.getTransferSum());
