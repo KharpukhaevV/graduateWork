@@ -17,9 +17,10 @@
             <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
         </form>
         <hr>
-        <div class="row">
+        <div class="row" style="text-align: center;">
             <div class="col">
-                <table class="table">
+                <h5 style="margin-bottom: 30px">Предложения по владам</h5>
+                <table class="table" style="">
                     <tr>
                         <th scope="col"></th>
                         <th scope="col">Ставка</th>
@@ -32,22 +33,25 @@
                         <th scope="col"></th>
                     </tr>
                     <tr th:each="a : ${all}">
-                        <form method="POST" action="/contribution/accept" th:object="${contribution}">
+                        <form method="POST" action="/contribution/accept">
                             <td th:text="${a.getName()}"></td>
-                            <td th:text="${a.getStake()}">
-                                <input type="hidden" id="stake" th:field="*{stake}" th:value="${a.getStake()}">
+                            <td>
+                                <label for="stake" th:text="${a.getStake()}"></label>
+                                <input type="hidden" id="stake" name="stake" th:value="${a.getStake()}">
                             </td>
-                            <td th:text="${a.getTakeOff()}">
-                                <input type="hidden" th:field="*{takeOf}" th:value="${a.getTakeOff()}">
+                            <td>
+                                <label for="takeOff" th:text="${a.getTakeOff()}"></label>
+                                <input type="hidden" id="takeOff" name="takeOff" th:value="${a.getTakeOff()}">
                             </td>
-                            <td th:text="${a.getTopUp()}">
-                                <input type="hidden" th:field="*{takeOf}" th:value="${a.getTopUp()}">
+                            <td>
+                                <label for="getUp" th:text="${a.getTopUp()}"></label>
+                                <input type="hidden" id="getUp" name="getUp" th:value="${a.getTopUp()}">
                             </td>
                             <td>
                                 <input type="date" id="start" name="term" th:min="${a.getTerm()}">
                             </td>
                             <td>
-                                <div th:if="${a.getCurrency()}" >
+                                <div th:if="${a.getCurrency()}">
                                     <input list="currency" name="currency" placeholder="Выберете валюту"/>
                                     <datalist id="currency">
                                         <div th:each="curr : ${currency}">
@@ -60,17 +64,17 @@
                                     <label for="rub">RUB</label>
                                 </div>
                             </td>
-                            <td><input type="text" th:field="*{sum}">Сумма</td>
+                            <td><input type="text" name="sum">Сумма</td>
                             <td>
-                                <input list="accounts" name="account" placeholder="Выберете счет"/>
-                                <datalist id="accounts">
+                                <input list="account" name="accountNum" placeholder="Выберете счет"/>
+                                <datalist id="account">
                                     <div th:each="account : ${client.getAccounts()}">
                                         <option th:value="${account.getNumber()}">
                                     </div>
                                 </datalist>
                             </td>
                             <td>
-                                <input type="hidden" th:field="*{client}" th:value="${client.getId()}">
+                                <input type="hidden" name="client" th:value="${client.getId()}">
                                 <button type="submit" class="btn btn-sm btn-outline-success">Оформить</button>
                             </td>
                         </form>
@@ -79,22 +83,35 @@
             </div>
         </div>
         <hr>
-        <div class="row">
+        <div class="row" style="text-align: center;">
             <div class="col">
+                <h5 style="margin-bottom: 30px">Ваши вклады</h5>
                 <table>
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th scope="col">Сберегательный счет №</th>
+                        <th scope="col">Дата создания</th>
+                        <th scope="col">Дата окончания</th>
+                        <th scope="col">Сумма вклада</th>
+                        <th scope="col">Можно пополнить</th>
+                        <th scope="col">Можно снять</th>
                     </tr>
                     <tr th:each="con : ${contributions}">
-                        <td th:text="${con.getId()}"></td>
-                        <td th:text="${con.getStake()}"></td>
-                        <td th:text="${con.getCurrency()}"></td>
-                        <td th:text="${con.getTerm()}"></td>
+                        <td th:text="${con.getAccount().getNumber()}"></td>
+                        <td th:text="${con.getStartDate()}"></td>
+                        <td th:text="${con.getExpirationDate()}"></td>
                         <td th:text="${con.getSum()}"></td>
+                        <td th:if="${con.getTakeUp() == true}">
+                            <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Поплнить</button>
+                            </form>
+                        </td>
+                        <td th:if="not ${con.getTakeUp() == true}" th:text="${con.getTakeUp()}"></td>
+                        <td th:if="${con.getTakeOf() == true}">
+                            <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+                                <button type="submit" class="btn btn-sm btn-outline-success">Снять</button>
+                            </form>
+                        </td>
+                        <td th:if="not ${con.getTakeOf() == true}" th:text="${con.getTakeOf()}"></td>
                     </tr>
                 </table>
             </div>

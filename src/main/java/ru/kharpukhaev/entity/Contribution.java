@@ -1,5 +1,6 @@
 package ru.kharpukhaev.entity;
 
+import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
@@ -20,10 +21,16 @@ public class Contribution {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
+    private Account account;
+
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    private LocalDate term;
+    private LocalDate startDate;
+
+    private LocalDate expirationDate;
 
     private Double stake;
 
@@ -37,13 +44,16 @@ public class Contribution {
     public Contribution() {
     }
 
-    public Contribution(Client client, Currency currency, LocalDate term, Double stake, Boolean takeOf, Boolean takeUp) {
+    public Contribution(Client client, Currency currency, LocalDate expirationDate, Double stake, Boolean takeOf, Boolean takeUp, Long sum) {
         this.client = client;
         this.currency = currency;
-        this.term = term;
+        this.expirationDate = expirationDate;
         this.stake = stake;
         this.takeOf = takeOf;
         this.takeUp = takeUp;
+        this.account = new Account(AccountType.SAVINGS_ACCOUNT, client, currency);
+        this.startDate = LocalDate.now();
+        this.sum = sum;
     }
 
     public Long getId() {
@@ -66,12 +76,12 @@ public class Contribution {
         this.currency = currency;
     }
 
-    public LocalDate getTerm() {
-        return term;
+    public LocalDate getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setTerm(LocalDate term) {
-        this.term = term;
+    public void setExpirationDate(LocalDate term) {
+        this.expirationDate = term;
     }
 
     public Double getStake() {
@@ -104,5 +114,21 @@ public class Contribution {
 
     public void setSum(long sum) {
         this.sum = sum;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 }

@@ -3,8 +3,8 @@ package ru.kharpukhaev.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.Contribution;
 import ru.kharpukhaev.entity.ContributionOffer;
 import ru.kharpukhaev.entity.enums.Currency;
@@ -12,7 +12,6 @@ import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.ContributionOfferRepository;
 import ru.kharpukhaev.repository.ContributionsRepository;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDate;
 
@@ -52,15 +51,13 @@ public class ContributionsController {
     }
 
     @PostMapping("/accept")
-    public String accept(@ModelAttribute("contribution") @Valid Contribution contribution, BindingResult bindingResult,
-                         @RequestParam String term,
-                         @RequestParam Currency currency) {
-//        if (bindingResult.hasErrors()) {
-//            return "contributions";
-//        }
-        contribution.setTerm(LocalDate.parse(term));
-        contribution.setCurrency(currency);
-        contributionsRepository.save(contribution);
+    public String accept(@RequestParam Double stake, @RequestParam Boolean takeOff, @RequestParam Boolean getUp, @RequestParam String term, @RequestParam Currency currency,
+                         @RequestParam Long sum, @RequestParam String accountNum, @RequestParam Client client) {
+
+        Contribution contribution1 = new Contribution(client, currency, LocalDate.parse(term), stake, takeOff, getUp, sum);
+        contributionsRepository.save(contribution1);
         return "redirect:/contribution";
     }
+
+//    https://frontbackend.com/thymeleaf/spring-boot-bootstrap-thymeleaf-modal
 }

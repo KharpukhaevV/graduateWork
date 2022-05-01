@@ -23,8 +23,9 @@
                 <p>Выберете вашу карту/счет</p>
                 <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}" th:errors="*{accountSender}"></p>
                 <div class="btn-group" role="group">
-                    <div th:each="account, iter : ${client.getAccounts()}">
-                        <input type="radio" class="btn-check" th:field="*{accountSender}" th:id="${iter}" autocomplete="off"
+                    <div th:each="account, iter : ${accounts}">
+                        <input type="radio" class="btn-check" th:field="*{accountSender}" th:id="${iter}"
+                               autocomplete="off"
                                th:value="${account.getNumber()}"/>
                         <label style="width: 210px; margin-right: 5px;" class="btn btn-outline-success"
                                th:for="${iter}">
@@ -63,7 +64,7 @@
                 <h5>Перевод между своими счетами</h5>
                 <p>Выберете ваш счет для отправки</p>
                 <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}" th:errors="*{accountSender}"></p>
-                <div class="btn-group" role="group" th:each="account, iter : ${client.getAccounts()}">
+                <div class="btn-group" role="group" th:each="account, iter : ${accounts}">
                     <input type="radio" class="btn-check" th:field="*{accountSender}" th:id="${'s' + iter}"
                            autocomplete="off"
                            th:value="${account.getNumber()}"/>
@@ -78,7 +79,7 @@
                 <p>Выберете ваш счет для получения</p>
                 <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}"
                    th:errors="*{accountRecipient}"></p>
-                <div class="btn-group" role="group" th:each="account, iter : ${client.getAccounts()}">
+                <div class="btn-group" role="group" th:each="account, iter : ${accounts}">
                     <input type="radio" class="btn-check" th:field="*{accountRecipient}" th:id="${'r' + iter}"
                            autocomplete="off"
                            th:value="${account.getNumber()}"/>
