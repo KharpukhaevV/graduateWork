@@ -39,6 +39,9 @@
     <form method="GET" action="/operator/credits" style="margin: 10px" th:if="${#strings.contains(#authentication.principal.authorities,'MODERATOR')}">
         <button type="submit" class="btn btn-sm btn-outline-success">Расмотрение кредитов</button>
     </form>
+    <form method="GET" action="/operator/contributions" style="margin: 10px" th:if="${#strings.contains(#authentication.principal.authorities,'MODERATOR')}">
+        <button type="submit" class="btn btn-sm btn-outline-success">Предложения по вкладам</button>
+    </form>
     <form th:action="@{/logout}" style="margin: 10px; text-align: right" method="post">
         <button type="submit" class="btn btn-sm btn-outline-danger">Выход</button>
     </form>

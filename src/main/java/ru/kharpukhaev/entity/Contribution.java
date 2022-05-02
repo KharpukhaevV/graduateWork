@@ -1,11 +1,10 @@
 package ru.kharpukhaev.entity;
 
-import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import java.time.LocalDate;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "contributions")
@@ -21,16 +20,18 @@ public class Contribution {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    private LocalDate startDate;
+    private String startDate;
 
-    private LocalDate expirationDate;
+    @NotEmpty
+    private String expirationDate;
 
     private Double stake;
 
@@ -38,22 +39,12 @@ public class Contribution {
 
     private Boolean takeUp;
 
-    @Min(100)
-    private long sum;
+    private Boolean canBeClosed;
+
+    @NotNull
+    private Long sum;
 
     public Contribution() {
-    }
-
-    public Contribution(Client client, Currency currency, LocalDate expirationDate, Double stake, Boolean takeOf, Boolean takeUp, Long sum) {
-        this.client = client;
-        this.currency = currency;
-        this.expirationDate = expirationDate;
-        this.stake = stake;
-        this.takeOf = takeOf;
-        this.takeUp = takeUp;
-        this.account = new Account(AccountType.SAVINGS_ACCOUNT, client, currency);
-        this.startDate = LocalDate.now();
-        this.sum = sum;
     }
 
     public Long getId() {
@@ -76,11 +67,11 @@ public class Contribution {
         this.currency = currency;
     }
 
-    public LocalDate getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(LocalDate term) {
+    public void setExpirationDate(String term) {
         this.expirationDate = term;
     }
 
@@ -108,7 +99,7 @@ public class Contribution {
         this.takeUp = takeUp;
     }
 
-    public long getSum() {
+    public Long getSum() {
         return sum;
     }
 
@@ -124,11 +115,23 @@ public class Contribution {
         this.account = account;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
+    }
+
+    public Boolean getCanBeClosed() {
+        return canBeClosed;
+    }
+
+    public void setCanBeClosed(Boolean canBeClosed) {
+        this.canBeClosed = canBeClosed;
+    }
+
+    public void setSum(Long sum) {
+        this.sum = sum;
     }
 }

@@ -74,8 +74,10 @@ public class TransferService {
     public void transferBetweenTheir(String senderNumber, String recipientNumber, long sum) {
         Account sender = accountRepository.findAccountByNumber(senderNumber);
         Account recipient = accountRepository.findAccountByNumber(recipientNumber);
-        if (sender.getCard().getType().equals(CardType.CREDIT)) {
-            creditService.addCredit(sum, sender.getCard());
+        if (sender.getCard() != null) {
+            if (sender.getCard().getType().equals(CardType.CREDIT)) {
+                creditService.addCredit(sum, sender.getCard());
+            }
         }
         sender.setBalance(sender.getBalance() - sum);
         recipient.setBalance(recipient.getBalance() + sum);

@@ -1,6 +1,9 @@
 package ru.kharpukhaev.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 
 @Entity
@@ -13,31 +16,38 @@ public class ContributionOffer {
     @Column(name = "contribution_offer_id", unique = true, nullable = false)
     private Long id;
 
+    @NotEmpty
     private String name;
 
+    @Positive
+    @NotNull
     private Double stake;
-
+    @NotNull
     private Boolean takeOff;
-
+    @NotNull
     private Boolean topUp;
-
+    @NotNull
     private Boolean isCurrency;
-
+    @Positive
+    @NotNull
     private Integer minTerm;
 
     private LocalDate term;
+    @NotNull
+    private Boolean canBeClosed;
 
 
     public ContributionOffer() {
     }
 
-    public ContributionOffer(String name, Double stake, Integer minTerm, Boolean takeOff, Boolean topUp, Boolean isCurrency) {
+    public ContributionOffer(String name, Double stake, Integer minTerm, Boolean takeOff, Boolean topUp, Boolean isCurrency, Boolean canBeClosed) {
         this.name = name;
         this.stake = stake;
         this.minTerm = minTerm;
         this.takeOff = takeOff;
         this.topUp = topUp;
         this.isCurrency = isCurrency;
+        this.canBeClosed = canBeClosed;
     }
 
     public Long getId() {
@@ -98,5 +108,13 @@ public class ContributionOffer {
 
     public void setCurrency(Boolean currency) {
         isCurrency = currency;
+    }
+
+    public Boolean getCanBeClosed() {
+        return canBeClosed;
+    }
+
+    public void setCanBeClosed(Boolean canBeClosed) {
+        this.canBeClosed = canBeClosed;
     }
 }

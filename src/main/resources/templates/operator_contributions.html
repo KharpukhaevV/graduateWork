@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:replace="fragments/dependency :: style1">
+    <link th:replace="fragments/dependency :: style2">
+</head>
+<body>
+
+    <div class="container">
+        <nav th:replace="fragments/nav_bar :: navbar"></nav>
+        <hr>
+        <h4>Создать предложения по вкладам</h4>
+        <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
+        </form>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <h5 style="margin-bottom: 30px">Текущие предложения</h5>
+                <table class="table">
+                    <tr>
+                        <th scope="col">Название</th>
+                        <th scope="col">Ставка</th>
+                        <th scope="col">Возможность снятия</th>
+                        <th scope="col">Возможность пополнения</th>
+                        <th scope="col">Минимальный срок (месяцев)</th>
+                        <th scope="col">Валюта</th>
+                        <th scope="col">Закрыть досрочно</th>
+                        <th scope="col"></th>
+                    </tr>
+                    <tr th:each="a : ${contributions}">
+                        <form method="POST" action="/operator/delete">
+                            <td th:text="${a.getName()}"></td>
+                            <td th:text="${a.getStake()}"></td>
+                            <td th:text="${a.getTakeOff()}"></td>
+                            <td th:text="${a.getTopUp()}"></td>
+                            <td th:text="${a.getMinTerm()}"></td>
+                            <td th:text="${a.getCurrency()}"></td>
+                            <td th:text="${a.getCanBeClosed()}"></td>
+                            <td>
+                                <input type="hidden" name="contributionOffer" th:value="${a.getId()}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Закрыть</button>
+                            </td>
+                        </form>
+                    </tr>
+                    <tr>
+                        <form action="/operator/create" method="POST" th:object="${offer}">
+                            <td>
+                                <input class="form-control" type="text" th:field="*{name}" placeholder="Название">
+                                <label style="color: red;" th:if="${#fields.hasErrors('name')}"
+                                       th:errors="*{name}"></label>
+                            </td>
+                            <td>
+                                <input class="form-control" type="text" th:field="*{stake}" placeholder="Ставка">
+                                <label style="color: red;" th:if="${#fields.hasErrors('stake')}"
+                                       th:errors="*{stake}"></label>
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{takeOff}" id="takeOffTrue" autocomplete="off" th:value="${true}"/>
+                                    <label class="form-check-label" for="takeOffTrue">Да</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{takeOff}" id="takeOffFalse" autocomplete="off" th:value="${false}"/>
+                                    <label class="form-check-label" for="takeOffFalse">Нет</label>
+                                </div>
+                                <label style="color: red;" th:if="${#fields.hasErrors('takeOff')}"
+                                       th:errors="*{takeOff}"></label>
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{topUp}" id="topUpTrue" autocomplete="off" th:value="${true}"/>
+                                    <label class="form-check-label" for="topUpTrue">Да</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{topUp}" id="topUpFalse" autocomplete="off" th:value="${false}"/>
+                                    <label class="form-check-label" for="topUpFalse">Нет</label>
+                                </div>
+                                <label style="color: red;" th:if="${#fields.hasErrors('topUp')}"
+                                       th:errors="*{topUp}"></label>
+                            </td>
+                            <td>
+                                <input class="form-control" type="text" th:field="*{minTerm}" placeholder="Минимальный срок">
+                                <label style="color: red;" th:if="${#fields.hasErrors('minTerm')}"
+                                       th:errors="*{minTerm}"></label>
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{currency}" id="currencyTrue" autocomplete="off" th:value="${true}"/>
+                                    <label class="form-check-label" for="currencyTrue">Да</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{currency}" id="currencyFalse" autocomplete="off" th:value="${false}"/>
+                                    <label class="form-check-label" for="currencyFalse">Нет</label>
+                                </div>
+                                <label style="color: red;" th:if="${#fields.hasErrors('currency')}"
+                                       th:errors="*{currency}"></label>
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{canBeClosed}" id="canBeClosed" autocomplete="off" th:value="${true}"/>
+                                    <label class="form-check-label" for="canBeClosed">Да</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{canBeClosed}" id="cantBeClosed" autocomplete="off" th:value="${false}"/>
+                                    <label class="form-check-label" for="cantBeClosed">Нет</label>
+                                </div>
+                                <label style="color: red;" th:if="${#fields.hasErrors('canBeClosed')}"
+                                       th:errors="*{canBeClosed}"></label>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-sm btn-outline-success">Создать</button>
+                            </td>
+                        </form>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <script th:replace="fragments/dependency :: script1"></script>
+    <script th:replace="fragments/dependency :: script2"></script>
+    <script th:replace="fragments/dependency :: script3"></script>
+</body>
+</html>

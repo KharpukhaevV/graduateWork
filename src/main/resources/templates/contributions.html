@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
->
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Вклады</title>
@@ -20,7 +19,7 @@
         <div class="row" style="text-align: center;">
             <div class="col">
                 <h5 style="margin-bottom: 30px">Предложения по владам</h5>
-                <table class="table" style="">
+                <table class="table">
                     <tr>
                         <th scope="col"></th>
                         <th scope="col">Ставка</th>
@@ -30,29 +29,32 @@
                         <th scope="col">Валюта</th>
                         <th scope="col">Сумма</th>
                         <th scope="col">Счет</th>
+                        <th scope="col">Закрыть досрочно</th>
                         <th scope="col"></th>
                     </tr>
                     <tr th:each="a : ${all}">
-                        <form method="POST" action="/contribution/accept">
+                        <form method="POST" action="/contribution/accept" th:object="${contribution}">
                             <td th:text="${a.getName()}"></td>
                             <td>
-                                <label for="stake" th:text="${a.getStake()}"></label>
-                                <input type="hidden" id="stake" name="stake" th:value="${a.getStake()}">
+                                <label th:text="${a.getStake()}"></label>
+                                <input type="hidden" name="stake" th:value="${a.getStake()}">
                             </td>
                             <td>
-                                <label for="takeOff" th:text="${a.getTakeOff()}"></label>
-                                <input type="hidden" id="takeOff" name="takeOff" th:value="${a.getTakeOff()}">
+                                <label th:text="${a.getTakeOff()}"></label>
+                                <input type="hidden" name="takeOf" th:value="${a.getTakeOff()}">
                             </td>
                             <td>
-                                <label for="getUp" th:text="${a.getTopUp()}"></label>
-                                <input type="hidden" id="getUp" name="getUp" th:value="${a.getTopUp()}">
+                                <label th:text="${a.getTopUp()}"></label>
+                                <input type="hidden" name="takeUp" th:value="${a.getTopUp()}">
                             </td>
                             <td>
-                                <input type="date" id="start" name="term" th:min="${a.getTerm()}">
+                                <input class="form-control" type="date" id="start" name="term" th:field="*{expirationDate}" th:min="${a.getTerm()}">
+                                <label style="color: red;" th:if="${#fields.hasErrors('expirationDate')}"
+                                       th:errors="*{expirationDate}"></label>
                             </td>
                             <td>
                                 <div th:if="${a.getCurrency()}">
-                                    <input list="currency" name="currency" placeholder="Выберете валюту"/>
+                                    <input class="form-control" list="currency" name="currency" th:field="*{currency}" placeholder="Выберете валюту"/>
                                     <datalist id="currency">
                                         <div th:each="curr : ${currency}">
                                             <option th:value="${curr}">
@@ -60,18 +62,28 @@
                                     </datalist>
                                 </div>
                                 <div th:if="${not a.getCurrency()}">
-                                    <input type="hidden" id="rub" name="currency" th:value="'RUB'">
-                                    <label for="rub">RUB</label>
+                                    <input type="hidden"name="currency" th:value="'RUB'">
+                                    <label>RUB</label>
                                 </div>
+                                <label style="color: red;" th:if="${#fields.hasErrors('currency')}"
+                                       th:errors="*{currency}"></label>
                             </td>
-                            <td><input type="text" name="sum">Сумма</td>
                             <td>
-                                <input list="account" name="accountNum" placeholder="Выберете счет"/>
+                                <input class="form-control" type="text" name="sum" th:field="*{sum}" placeholder="Сумма вклада">
+                                <label style="color: red;" th:if="${#fields.hasErrors('sum')}"
+                                       th:errors="*{sum}"></label>
+                            </td>
+                            <td>
+                                <input class="form-control" list="account" name="accountNum" placeholder="Выберете счет"/>
                                 <datalist id="account">
-                                    <div th:each="account : ${client.getAccounts()}">
-                                        <option th:value="${account.getNumber()}">
+                                    <div th:each="account : ${accounts}">
+                                        <option th:value="${account.getId()}" th:text="${account.getNumber()}">
                                     </div>
                                 </datalist>
+                            </td>
+                            <td>
+                                <label th:text="${a.getCanBeClosed()}"></label>
+                                <input type="hidden" name="canBeClosed" th:value="${a.getCanBeClosed()}">
                             </td>
                             <td>
                                 <input type="hidden" name="client" th:value="${client.getId()}">
@@ -86,40 +98,125 @@
         <div class="row" style="text-align: center;">
             <div class="col">
                 <h5 style="margin-bottom: 30px">Ваши вклады</h5>
-                <table>
+                <table class="table">
                     <tr>
                         <th scope="col">Сберегательный счет №</th>
                         <th scope="col">Дата создания</th>
                         <th scope="col">Дата окончания</th>
+                        <th scope="col">Ставка</th>
                         <th scope="col">Сумма вклада</th>
+                        <th scope="col">Баланс счета</th>
                         <th scope="col">Можно пополнить</th>
                         <th scope="col">Можно снять</th>
+                        <th scope="col">Закрыть</th>
                     </tr>
                     <tr th:each="con : ${contributions}">
                         <td th:text="${con.getAccount().getNumber()}"></td>
                         <td th:text="${con.getStartDate()}"></td>
                         <td th:text="${con.getExpirationDate()}"></td>
+                        <td th:text="${con.getStake()}"></td>
                         <td th:text="${con.getSum()}"></td>
+                        <td th:text="${con.getAccount().getBalance()}"></td>
                         <td th:if="${con.getTakeUp() == true}">
-                            <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
-                                <button type="submit" class="btn btn-sm btn-outline-success">Поплнить</button>
-                            </form>
+                            <button th:id="${con.getAccount().getId()}" type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#modalTakeUp">
+                                Пополнить
+                            </button>
                         </td>
                         <td th:if="not ${con.getTakeUp() == true}" th:text="${con.getTakeUp()}"></td>
                         <td th:if="${con.getTakeOf() == true}">
-                            <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
-                                <button type="submit" class="btn btn-sm btn-outline-success">Снять</button>
-                            </form>
+                            <button th:id="${con.getAccount().getId()}" type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#modalTakeOf">
+                                Снять
+                            </button>
                         </td>
                         <td th:if="not ${con.getTakeOf() == true}" th:text="${con.getTakeOf()}"></td>
+                        <td th:if="${con.getCanBeClosed() == true}">
+                            <form action="contribution/close" method="GET">
+                                <input type="hidden" name="contribution" th:value="${con.getId()}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Закрыть</button>
+                            </form>
+                        </td>
+                        <td th:if="${con.getCanBeClosed() == false}" th:text="${con.getCanBeClosed()}"></td>
                     </tr>
                 </table>
             </div>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modalTakeOf" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Снятие со счета</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/contribution/takeOf">
+                            <label for="sender">Выберете счет: </label>
+                            <input id="sender" class="form-control" list="acc" name="accountRecipient" placeholder="Счет" style="margin-bottom: 10px; margin-top: 10px"/>
+                            <datalist id="acc">
+                                <div th:each="account : ${accounts}">
+                                    <option th:value="${account.getNumber()}">
+                                </div>
+                            </datalist>
+                            <label for="sum">Введите сумму:</label>
+                            <input type="text" id="sum" class="form-control" name="sum" placeholder="Сумма" style="margin-bottom: 10px; margin-top: 10px">
+                            <input type="hidden" name="accountSender" class="form-control rec" id="rec">
+                            <button type="submit" class="btn btn-outline-success" style="margin-bottom: 10px; margin-top: 10px">Снять</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-sm btn-secondary" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalTakeUp" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="Title">Пополнение счета</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/contribution/takeUp">
+                            <label for="sender">Выберете счет: </label>
+                            <input id="sender" class="form-control" list="acc" name="accountSender" placeholder="Счет" style="margin-bottom: 10px; margin-top: 10px"/>
+                            <datalist id="acc">
+                                <div th:each="account : ${accounts}">
+                                    <option th:value="${account.getNumber()}">
+                                </div>
+                            </datalist>
+                            <label for="sum">Введите сумму:</label>
+                            <input type="text" id="sum" class="form-control" name="sum" placeholder="Сумма" style="margin-bottom: 10px; margin-top: 10px">
+                            <input type="hidden" name="accountRecipient" class="form-control rec">
+                            <button type="submit" class="btn btn-outline-success" style="margin-bottom: 10px; margin-top: 10px">Пополнить</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script th:replace="fragments/dependency :: script1"></script>
     <script th:replace="fragments/dependency :: script2"></script>
     <script th:replace="fragments/dependency :: script3"></script>
+
+    <script>
+        $('#modalTakeOf').on('show.bs.modal', function (event) {
+            var recipient = event.relatedTarget.id
+            var modal = $(this)
+            modal.find('.modal-body .rec').val(recipient)
+        })
+
+        $('#modalTakeUp').on('show.bs.modal', function (event) {
+            var recipient = event.relatedTarget.id
+            var modal = $(this)
+            modal.find('.modal-body .rec').val(recipient)
+        })
+    </script>
+
 </body>
 </html>

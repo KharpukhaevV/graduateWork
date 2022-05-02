@@ -32,6 +32,9 @@ public class Account {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @OneToOne(mappedBy = "account", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Contribution contribution;
+
     public Account() {
     }
 
@@ -92,5 +95,13 @@ public class Account {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public Contribution getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Contribution contribution) {
+        this.contribution = contribution;
     }
 }
