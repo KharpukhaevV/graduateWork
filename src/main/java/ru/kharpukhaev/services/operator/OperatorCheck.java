@@ -1,4 +1,4 @@
-package ru.kharpukhaev.services;
+package ru.kharpukhaev.services.operator;
 
 import org.springframework.stereotype.Service;
 import ru.kharpukhaev.entity.Account;

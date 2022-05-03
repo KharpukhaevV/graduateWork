@@ -1,4 +1,4 @@
-package ru.kharpukhaev.services;
+package ru.kharpukhaev.services.transfer;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +8,7 @@ import ru.kharpukhaev.entity.enums.CardType;
 import ru.kharpukhaev.entity.enums.TransferStatus;
 import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.TransferRepository;
+import ru.kharpukhaev.services.credit.CreditService;
 
 @Component
 public class TransferService {

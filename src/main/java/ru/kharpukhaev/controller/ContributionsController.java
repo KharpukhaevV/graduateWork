@@ -16,10 +16,10 @@ import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.ContributionOfferRepository;
 import ru.kharpukhaev.repository.ContributionsRepository;
-import ru.kharpukhaev.services.ContributionService;
-import ru.kharpukhaev.services.CurrencyConvertService;
-import ru.kharpukhaev.services.TransferService;
-import ru.kharpukhaev.services.TransferValidationService;
+import ru.kharpukhaev.services.contribution.ContributionService;
+import ru.kharpukhaev.services.transfer.CurrencyConvertService;
+import ru.kharpukhaev.services.transfer.TransferService;
+import ru.kharpukhaev.services.validation.TransferValidationService;
 
 import javax.validation.Valid;
 import java.security.Principal;

@@ -15,7 +15,7 @@ import ru.kharpukhaev.repository.ClientCreditRequestRepository;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.ContributionOfferRepository;
 import ru.kharpukhaev.repository.TransferRepository;
-import ru.kharpukhaev.services.OperatorCheck;
+import ru.kharpukhaev.services.operator.OperatorCheck;
 
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;

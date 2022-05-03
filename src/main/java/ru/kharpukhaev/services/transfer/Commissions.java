@@ -1,4 +1,4 @@
-package ru.kharpukhaev.services;
+package ru.kharpukhaev.services.transfer;
 
 import org.springframework.stereotype.Component;
 import ru.kharpukhaev.entity.Account;

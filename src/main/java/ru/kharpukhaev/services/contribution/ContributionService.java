@@ -1,4 +1,4 @@
-package ru.kharpukhaev.services;
+package ru.kharpukhaev.services.contribution;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +7,7 @@ import ru.kharpukhaev.entity.Contribution;
 import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.ContributionsRepository;
+import ru.kharpukhaev.services.transfer.CurrencyConvertService;
 
 import java.time.LocalDate;
 

@@ -15,7 +15,7 @@ import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.repository.ClientCreditRequestRepository;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.CreditRepository;
-import ru.kharpukhaev.services.ClientCredit;
+import ru.kharpukhaev.services.credit.ClientCredit;
 
 import java.security.Principal;
 

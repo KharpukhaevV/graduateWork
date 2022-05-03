@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.repository.ClientRepository;
-import ru.kharpukhaev.services.TransferService;
-import ru.kharpukhaev.services.TransferValidationService;
+import ru.kharpukhaev.services.transfer.TransferService;
+import ru.kharpukhaev.services.validation.TransferValidationService;
 
 import javax.validation.Valid;
 import java.security.Principal;
