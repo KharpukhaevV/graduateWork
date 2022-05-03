@@ -78,10 +78,8 @@ public class MainController {
     @GetMapping("/add_account")
     public String addAccount() {
         Account account = new Account(AccountType.CHECKING_ACCOUNT, client, Currency.RUB);
-        Account account1 = new Account(AccountType.CURRENCY_ACCOUNT, client, Currency.RUB);
         Account account2 = new Account(AccountType.SAVINGS_ACCOUNT, client, Currency.RUB);
         accountRepository.save(account);
-        accountRepository.save(account1);
         accountRepository.save(account2);
         return "redirect:/profile";
     }

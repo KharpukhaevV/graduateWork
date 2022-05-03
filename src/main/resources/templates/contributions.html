@@ -77,7 +77,7 @@
                                 <input class="form-control" list="account" name="accountNum" placeholder="Выберете счет"/>
                                 <datalist id="account">
                                     <div th:each="account : ${accounts}">
-                                        <option th:value="${account.getId()}" th:text="${account.getNumber()}">
+                                        <option th:value="${account.getNumber()}">
                                     </div>
                                 </datalist>
                             </td>
@@ -89,6 +89,9 @@
                                 <input type="hidden" name="client" th:value="${client.getId()}">
                                 <button type="submit" class="btn btn-sm btn-outline-success">Оформить</button>
                             </td>
+                            <div th:if="${#fields.hasErrors('global')}">
+                                <p th:each="err : ${#fields.errors('global')}" th:text="${err}" style="color: red"></p>
+                            </div>
                         </form>
                     </tr>
                 </table>
