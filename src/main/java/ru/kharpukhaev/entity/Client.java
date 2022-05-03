@@ -2,12 +2,14 @@ package ru.kharpukhaev.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.Role;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -174,6 +176,14 @@ public class Client implements UserDetails {
 
     public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public List<Account> getCheckingAccounts() {
+        return getAccounts().stream().filter(p -> p.getType().equals(AccountType.CHECKING_ACCOUNT)).toList();
+    }
+
+    public List<Account> getSavingAccounts() {
+        return getAccounts().stream().filter(p -> p.getType().equals(AccountType.SAVINGS_ACCOUNT)).toList();
     }
 
     @Override

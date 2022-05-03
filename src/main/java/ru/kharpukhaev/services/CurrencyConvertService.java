@@ -32,27 +32,27 @@ public class CurrencyConvertService {
         return sum;
     }
 
-    public Long usdToRub(Long sum) {
+    private Long usdToRub(Long sum) {
         return sum * 70;
     }
 
-    public Long usdToEur(Long sum) {
+    private Long usdToEur(Long sum) {
         return (long) (sum * 0.9);
     }
 
-    public Long eurToRub(Long sum) {
+    private Long eurToRub(Long sum) {
         return sum * 80;
     }
 
-    public Long eurToUsd(Long sum) {
+    private Long eurToUsd(Long sum) {
         return (long) (sum * 1.1);
     }
 
-    public Long rubToUsd(Long sum) {
+    private Long rubToUsd(Long sum) {
         return (long) (sum * 0.015);
     }
 
-    public Long rubToEur(Long sum) {
+    private Long rubToEur(Long sum) {
         return (long) (sum * 0.010);
     }
 }

@@ -4,6 +4,7 @@ package ru.kharpukhaev.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.Account;
 import ru.kharpukhaev.entity.Client;
@@ -15,11 +16,14 @@ import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.ContributionOfferRepository;
 import ru.kharpukhaev.repository.ContributionsRepository;
+import ru.kharpukhaev.services.ContributionService;
+import ru.kharpukhaev.services.CurrencyConvertService;
 import ru.kharpukhaev.services.TransferService;
+import ru.kharpukhaev.services.TransferValidationService;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequestMapping("/contribution")
@@ -30,16 +34,27 @@ public class ContributionsController {
     private final ClientRepository clientRepository;
     private final AccountRepository accountRepository;
     private final TransferService transferService;
+    private final TransferValidationService transferValidationService;
+    private final ContributionService contributionService;
+    private final CurrencyConvertService currencyConvertService;
+    private Client client;
 
     public ContributionsController(ContributionOfferRepository contributionOfferRepository,
                                    ContributionsRepository contributionsRepository,
                                    ClientRepository clientRepository,
-                                   AccountRepository accountRepository, TransferService transferService) {
+                                   AccountRepository accountRepository,
+                                   TransferService transferService,
+                                   TransferValidationService transferValidationService,
+                                   ContributionService contributionService,
+                                   CurrencyConvertService currencyConvertService) {
         this.contributionOfferRepository = contributionOfferRepository;
         this.contributionsRepository = contributionsRepository;
         this.clientRepository = clientRepository;
         this.accountRepository = accountRepository;
         this.transferService = transferService;
+        this.transferValidationService = transferValidationService;
+        this.contributionService = contributionService;
+        this.currencyConvertService = currencyConvertService;
     }
 
     @GetMapping
@@ -48,26 +63,37 @@ public class ContributionsController {
         for (ContributionOffer a : all) {
             a.setTerm(LocalDate.now().plusMonths(a.getMinTerm()));
         }
-        Client client =clientRepository.findByUsername(principal.getName());
-        List<Account> accounts = client.getAccounts().stream().filter(p -> !p.getType().equals(AccountType.SAVINGS_ACCOUNT)).toList();
-        model.addAttribute("accounts", accounts);
+        client = clientRepository.findByUsername(principal.getName());
+        model.addAttribute("accounts", client.getCheckingAccounts());
         model.addAttribute("client", client);
         model.addAttribute("currency", new Currency[] {Currency.EUR, Currency.USD});
         model.addAttribute("all", all);
-        model.addAttribute("contributions", contributionsRepository.findAll());
+        model.addAttribute("contributions", contributionsRepository.findAllByClient(client));
         return "contributions";
     }
 
     @PostMapping("/accept")
-    public String accept(@ModelAttribute("contribution") Contribution contribution, BindingResult bindingResult, @RequestParam Client client) {
+    public String accept(@ModelAttribute("contribution") @Valid Contribution contribution, BindingResult bindingResult, @RequestParam String accountNum, Model model) {
+        Account accountByNumber = accountRepository.findAccountByNumber(accountNum);
+        Long sumCurrency = currencyConvertService.checkCurrencyAndConvert(contribution.getCurrency(), accountByNumber.getCurrency(), contribution.getSum());
+        String err = transferValidationService.validateTransferSum(accountNum, sumCurrency);
+        if (!err.isEmpty()) {
+            ObjectError error = new ObjectError("globalError", err);
+            bindingResult.addError(error);
+        }
         if (bindingResult.hasErrors()) {
+            Iterable<ContributionOffer> all = contributionOfferRepository.findAll();
+            for (ContributionOffer a : all) {
+                a.setTerm(LocalDate.now().plusMonths(a.getMinTerm()));
+            }
+            model.addAttribute("accounts", client.getCheckingAccounts());
+            model.addAttribute("client", client);
+            model.addAttribute("currency", new Currency[] {Currency.EUR, Currency.USD});
+            model.addAttribute("all", all);
+            model.addAttribute("contributions", contributionsRepository.findAll());
             return "contributions";
         }
-        Account account = new Account(AccountType.SAVINGS_ACCOUNT, client, contribution.getCurrency());
-        contribution.setAccount(account);
-        contribution.setStartDate(LocalDate.now().toString());
-        accountRepository.save(account);
-        contributionsRepository.save(contribution);
+        contributionService.openContribution(contribution, accountNum);
         return "redirect:/contribution";
     }
 
