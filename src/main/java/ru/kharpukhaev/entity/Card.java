@@ -29,7 +29,7 @@ public class Card {
     private Client client;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card", orphanRemoval = true)
-    private CreditBid creditBid;
+    private CreditOfferEntity creditOfferEntity;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "card", orphanRemoval = true)
     private Set<CreditEntity> credits;
@@ -70,12 +70,12 @@ public class Card {
         this.type = type;
     }
 
-    public CreditBid getCreditBid() {
-        return creditBid;
+    public CreditOfferEntity getCreditOffer() {
+        return creditOfferEntity;
     }
 
-    public void setCreditBid(CreditBid creditBid) {
-        this.creditBid = creditBid;
+    public void setCreditOffer(CreditOfferEntity creditOfferEntity) {
+        this.creditOfferEntity = creditOfferEntity;
     }
 
     public LocalDate getExpirationDate() {

@@ -37,10 +37,10 @@ public class CreditEntity {
         this.penalties = 0L;
         this.creditStatus = CreditStatus.ACTIVE;
         LocalDate localDate = LocalDate.now().plusMonths(1);
-        if (localDate.isBefore(card.getCreditBid().getExpirationDate())) {
+        if (localDate.isBefore(LocalDate.parse(card.getCreditOffer().getExpirationDate()))) {
             this.expirationDate = LocalDate.now().plusMonths(1);
         } else {
-            this.expirationDate = card.getCreditBid().getExpirationDate().plusDays(1);
+            this.expirationDate = LocalDate.parse(card.getCreditOffer().getExpirationDate()).plusDays(1);
         }
     }
 

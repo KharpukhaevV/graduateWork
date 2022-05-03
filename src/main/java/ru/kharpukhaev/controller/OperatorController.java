@@ -5,20 +5,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.kharpukhaev.entity.ClientCreditRequest;
 import ru.kharpukhaev.entity.ContributionOffer;
-import ru.kharpukhaev.entity.CreditBid;
+import ru.kharpukhaev.entity.CreditOfferEntity;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.TransferStatus;
+import ru.kharpukhaev.repository.ClientCreditRequestRepository;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.ContributionOfferRepository;
-import ru.kharpukhaev.repository.CreditBidRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 import ru.kharpukhaev.services.OperatorCheck;
 
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Controller
@@ -30,17 +30,21 @@ public class OperatorController {
 
     private final TransferRepository transferRepository;
 
-    private final CreditBidRepository creditBidRepository;
-
     private final ContributionOfferRepository contributionOfferRepository;
+
+    private final ClientCreditRequestRepository clientCreditRequestRepository;
 
     private final OperatorCheck operatorCheck;
 
-    public OperatorController(ClientRepository clientRepository, TransferRepository transferRepository, CreditBidRepository creditBidRepository, ContributionOfferRepository contributionOfferRepository, OperatorCheck operatorCheck) {
+    public OperatorController(ClientRepository clientRepository,
+                              TransferRepository transferRepository,
+                              ContributionOfferRepository contributionOfferRepository,
+                              ClientCreditRequestRepository clientCreditRequestRepository,
+                              OperatorCheck operatorCheck) {
         this.clientRepository = clientRepository;
         this.transferRepository = transferRepository;
-        this.creditBidRepository = creditBidRepository;
         this.contributionOfferRepository = contributionOfferRepository;
+        this.clientCreditRequestRepository = clientCreditRequestRepository;
         this.operatorCheck = operatorCheck;
     }
 
@@ -65,21 +69,26 @@ public class OperatorController {
     }
 
     @GetMapping("/credits")
-    public String credits(@ModelAttribute("creditBid") CreditBid creditBid, Model model) {
-        model.addAttribute("credits", creditBidRepository.findAllByStatus(CreditBidStatus.PROCESSED));
+    public String credits(@ModelAttribute("creditOffer") CreditOfferEntity creditOffer, Model model) {
+        model.addAttribute("credits", clientCreditRequestRepository.findAllByStatus(CreditBidStatus.PROCESSED));
         model.addAttribute("currentDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         return "operator_credits";
     }
 
     @PostMapping("/offer")
-    public String creditOffer(@RequestParam CreditBid creditBid, @RequestParam long limit, @RequestParam double percent, @RequestParam String date) {
-        operatorCheck.makeCreditOffer(creditBid, limit, percent, LocalDate.parse(date));
+    public String creditOffer(@ModelAttribute("creditOffer") @Valid CreditOfferEntity creditOffer, BindingResult bindingResult, @RequestParam ClientCreditRequest request, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("credits", clientCreditRequestRepository.findAllByStatus(CreditBidStatus.PROCESSED));
+            model.addAttribute("currentDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+            return "operator_credits";
+        }
+        operatorCheck.makeCreditOffer(creditOffer, request);
         return "redirect:/operator/credits";
     }
 
     @PostMapping("/offer_decline")
-    public String declineOffer(@RequestParam CreditBid creditBid) {
-        operatorCheck.decline(creditBid);
+    public String declineOffer(@RequestParam ClientCreditRequest request) {
+        operatorCheck.decline(request);
         return "redirect:/operator/credits";
     }
 

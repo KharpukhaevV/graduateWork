@@ -4,15 +4,16 @@ import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "credit_bids")
-public class CreditBid {
+@Table(name = "credit_offers")
+public class CreditOfferEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "bid_id", unique = true, nullable = false)
+    @Column(name = "offer_id", unique = true, nullable = false)
     private Long id;
 
     @ManyToOne
@@ -22,28 +23,25 @@ public class CreditBid {
     @Enumerated(EnumType.STRING)
     private CreditBidStatus status;
 
-    private long limitCard;
+    @NotNull
+    private Long limitCard;
 
-    private double percent;
+    @NotNull
+    private Double percent;
 
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    private LocalDate startDate;
+    private String startDate;
 
-    private LocalDate expirationDate;
+    @NotEmpty
+    private String expirationDate;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "card_id")
     private Card card;
 
-    public CreditBid() {
-    }
-
-    public CreditBid(Client client, Currency currency) {
-        this.client = client;
-        this.currency = currency;
-        this.status = CreditBidStatus.PROCESSED;
+    public CreditOfferEntity() {
     }
 
     public Long getId() {
@@ -66,35 +64,35 @@ public class CreditBid {
         this.status = status;
     }
 
-    public long getLimitCard() {
+    public Long getLimitCard() {
         return limitCard;
     }
 
-    public void setLimitCard(long limit) {
+    public void setLimitCard(Long limit) {
         this.limitCard = limit;
     }
 
-    public double getPercent() {
+    public Double getPercent() {
         return percent;
     }
 
-    public void setPercent(double percent) {
+    public void setPercent(Double percent) {
         this.percent = percent;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(LocalDate expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 

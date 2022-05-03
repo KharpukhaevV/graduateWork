@@ -23,7 +23,7 @@ public class SchedulingCreditService {
         List<CreditEntity> creditsList = creditRepository.findAllByCreditStatus(CreditStatus.ACTIVE);
         for (CreditEntity credit : creditsList) {
             if (credit.getExpirationDate().isBefore(LocalDate.now())) {
-                if (credit.getCard().getAccount().getBalance() < credit.getCard().getCreditBid().getLimitCard()) {
+                if (credit.getCard().getAccount().getBalance() < credit.getCard().getCreditOffer().getLimitCard()) {
                     credit.setCreditStatus(CreditStatus.OVERDUE);
                     creditRepository.save(credit);
                 } else {
@@ -38,7 +38,7 @@ public class SchedulingCreditService {
     public void checkPenalties() {
         List<CreditEntity> creditsList = creditRepository.findAllByCreditStatus(CreditStatus.OVERDUE);
         for (CreditEntity credit : creditsList) {
-            if (credit.getCard().getAccount().getBalance() < credit.getCard().getCreditBid().getLimitCard() + (credit.getSum() / 100 * credit.getPenalties())) {
+            if (credit.getCard().getAccount().getBalance() < credit.getCard().getCreditOffer().getLimitCard() + (credit.getSum() / 100 * credit.getPenalties())) {
                 if (credit.getPenalties() < 40) {
                     credit.setPenalties(credit.getPenalties() + 1);
                     credit.setSum(credit.getSum() + (credit.getSum() / 100 * credit.getPenalties()));

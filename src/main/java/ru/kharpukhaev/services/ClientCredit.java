@@ -2,47 +2,49 @@ package ru.kharpukhaev.services;
 
 import org.springframework.stereotype.Service;
 import ru.kharpukhaev.entity.Card;
-import ru.kharpukhaev.entity.CreditBid;
+import ru.kharpukhaev.entity.CreditOfferEntity;
 import ru.kharpukhaev.entity.enums.CardType;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.repository.CardRepository;
-import ru.kharpukhaev.repository.CreditBidRepository;
+import ru.kharpukhaev.repository.CreditOfferRepository;
+
+import java.time.LocalDate;
 
 @Service
 public class ClientCredit {
 
-    private final CreditBidRepository creditBidRepository;
+    private final CreditOfferRepository creditOfferRepository;
 
     private final CardRepository cardRepository;
 
-    public ClientCredit(CreditBidRepository creditBidRepository, CardRepository cardRepository) {
-        this.creditBidRepository = creditBidRepository;
+    public ClientCredit(CreditOfferRepository creditOfferRepository, CardRepository cardRepository) {
+        this.creditOfferRepository = creditOfferRepository;
         this.cardRepository = cardRepository;
     }
 
-    public void creditAccept(CreditBid creditBid) {
-        creditBid.setStatus(CreditBidStatus.ACTIVE);
-        Card card = new Card(CardType.CREDIT, creditBid.getClient());
-        if (creditBid.getCurrency().equals(Currency.EUR)) {
-            creditBid.setLimitCard((creditBid.getLimitCard() * 80));
-            card.getAccount().setBalance(creditBid.getLimitCard() - (creditBid.getLimitCard() / 10));
+    public void creditAccept(CreditOfferEntity creditOfferEntity) {
+        creditOfferEntity.setStatus(CreditBidStatus.ACTIVE);
+        Card card = new Card(CardType.CREDIT, creditOfferEntity.getClient());
+        if (creditOfferEntity.getCurrency().equals(Currency.EUR)) {
+            creditOfferEntity.setLimitCard((creditOfferEntity.getLimitCard() * 80));
+            card.getAccount().setBalance(creditOfferEntity.getLimitCard() - (creditOfferEntity.getLimitCard() / 10));
         } else {
-            if (creditBid.getCurrency().equals(Currency.USD)) {
-                creditBid.setLimitCard((creditBid.getLimitCard() * 70));
-                card.getAccount().setBalance(creditBid.getLimitCard() - (creditBid.getLimitCard() / 10));
+            if (creditOfferEntity.getCurrency().equals(Currency.USD)) {
+                creditOfferEntity.setLimitCard((creditOfferEntity.getLimitCard() * 70));
+                card.getAccount().setBalance(creditOfferEntity.getLimitCard() - (creditOfferEntity.getLimitCard() / 10));
             } else {
-                card.getAccount().setBalance(creditBid.getLimitCard());
+                card.getAccount().setBalance(creditOfferEntity.getLimitCard());
             }
         }
-        card.setExpirationDate(creditBid.getExpirationDate());
-        creditBid.setCard(card);
+        card.setExpirationDate(LocalDate.parse(creditOfferEntity.getExpirationDate()));
+        creditOfferEntity.setCard(card);
         cardRepository.save(card);
-        creditBidRepository.save(creditBid);
+        creditOfferRepository.save(creditOfferEntity);
     }
 
-    public void creditDecline(CreditBid creditBid) {
-        creditBid.setStatus(CreditBidStatus.REJECTED);
-        creditBidRepository.save(creditBid);
+    public void creditDecline(CreditOfferEntity creditOfferEntity) {
+        creditOfferEntity.setStatus(CreditBidStatus.REJECTED);
+        creditOfferRepository.save(creditOfferEntity);
     }
 }

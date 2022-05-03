@@ -23,7 +23,9 @@ public class SchedulingCardService {
 
     private final ClientRepository clientRepository;
 
-    public SchedulingCardService(CardRepository cardRepository, CreditRepository creditRepository, ClientRepository clientRepository) {
+    public SchedulingCardService(CardRepository cardRepository,
+                                 CreditRepository creditRepository,
+                                 ClientRepository clientRepository) {
         this.cardRepository = cardRepository;
         this.creditRepository = creditRepository;
         this.clientRepository = clientRepository;

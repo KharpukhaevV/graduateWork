@@ -2,12 +2,14 @@ package ru.kharpukhaev.services;
 
 import org.springframework.stereotype.Service;
 import ru.kharpukhaev.entity.Account;
-import ru.kharpukhaev.entity.CreditBid;
+import ru.kharpukhaev.entity.ClientCreditRequest;
+import ru.kharpukhaev.entity.CreditOfferEntity;
 import ru.kharpukhaev.entity.TransferEntity;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.TransferStatus;
 import ru.kharpukhaev.repository.AccountRepository;
-import ru.kharpukhaev.repository.CreditBidRepository;
+import ru.kharpukhaev.repository.ClientCreditRequestRepository;
+import ru.kharpukhaev.repository.CreditOfferRepository;
 import ru.kharpukhaev.repository.TransferRepository;
 
 import java.time.LocalDate;
@@ -19,12 +21,18 @@ public class OperatorCheck {
 
     private final AccountRepository accountRepository;
 
-    private final CreditBidRepository creditBidRepository;
+    private final CreditOfferRepository creditOfferRepository;
 
-    public OperatorCheck(TransferRepository transferRepository, AccountRepository accountRepository, CreditBidRepository creditBidRepository) {
+    private final ClientCreditRequestRepository clientCreditRequestRepository;
+
+    public OperatorCheck(TransferRepository transferRepository,
+                         AccountRepository accountRepository,
+                         CreditOfferRepository creditOfferRepository,
+                         ClientCreditRequestRepository clientCreditRequestRepository) {
         this.transferRepository = transferRepository;
         this.accountRepository = accountRepository;
-        this.creditBidRepository = creditBidRepository;
+        this.creditOfferRepository = creditOfferRepository;
+        this.clientCreditRequestRepository = clientCreditRequestRepository;
     }
 
     public void paymentAccept(TransferEntity transferEntity) {
@@ -45,17 +53,14 @@ public class OperatorCheck {
         accountRepository.save(accountSender);
     }
 
-    public void makeCreditOffer(CreditBid creditBid, long limit, double percent, LocalDate date) {
-        creditBid.setLimitCard(limit);
-        creditBid.setPercent(percent);
-        creditBid.setStartDate(LocalDate.now());
-        creditBid.setExpirationDate(date);
-        creditBid.setStatus(CreditBidStatus.OFFERED);
-        creditBidRepository.save(creditBid);
+    public void makeCreditOffer(CreditOfferEntity creditOfferEntity, ClientCreditRequest request) {
+        creditOfferEntity.setStartDate(LocalDate.now().toString());
+        creditOfferEntity.setStatus(CreditBidStatus.OFFERED);
+        clientCreditRequestRepository.delete(request);
+        creditOfferRepository.save(creditOfferEntity);
     }
 
-    public void decline(CreditBid creditBid) {
-        creditBid.setStatus(CreditBidStatus.REJECTED);
-        creditBidRepository.save(creditBid);
+    public void decline(ClientCreditRequest request) {
+        clientCreditRequestRepository.delete(request);
     }
 }

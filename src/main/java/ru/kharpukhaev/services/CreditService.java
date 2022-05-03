@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.CreditEntity;
 import ru.kharpukhaev.entity.enums.CreditStatus;
-import ru.kharpukhaev.exceptions.OverdueLoanException;
 import ru.kharpukhaev.repository.CreditRepository;
 
 @Service
@@ -26,8 +25,6 @@ public class CreditService {
         }
         if (bid) {
             creditRepository.save(new CreditEntity(sum, card));
-        } else {
-            throw new OverdueLoanException("У вас есть просроченный кредит, сначала закройте его");
         }
     }
 }

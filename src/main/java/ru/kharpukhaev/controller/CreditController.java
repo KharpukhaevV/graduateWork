@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kharpukhaev.entity.Client;
-import ru.kharpukhaev.entity.CreditBid;
+import ru.kharpukhaev.entity.ClientCreditRequest;
 import ru.kharpukhaev.entity.CreditEntity;
+import ru.kharpukhaev.entity.CreditOfferEntity;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.Currency;
+import ru.kharpukhaev.repository.ClientCreditRequestRepository;
 import ru.kharpukhaev.repository.ClientRepository;
-import ru.kharpukhaev.repository.CreditBidRepository;
 import ru.kharpukhaev.repository.CreditRepository;
 import ru.kharpukhaev.services.ClientCredit;
 
@@ -23,15 +24,18 @@ import java.security.Principal;
 public class CreditController {
 
     private final ClientRepository clientRepository;
-    private final CreditBidRepository creditBidRepository;
     private final CreditRepository creditRepository;
+    private final ClientCreditRequestRepository clientCreditRequestRepository;
     private final ClientCredit clientCredit;
     private Client client;
 
-    public CreditController(ClientRepository clientRepository, CreditBidRepository creditBidRepository, CreditRepository creditRepository, ClientCredit clientCredit) {
+    public CreditController(ClientRepository clientRepository,
+                            CreditRepository creditRepository,
+                            ClientCreditRequestRepository clientCreditRequestRepository,
+                            ClientCredit clientCredit) {
         this.clientRepository = clientRepository;
-        this.creditBidRepository = creditBidRepository;
         this.creditRepository = creditRepository;
+        this.clientCreditRequestRepository = clientCreditRequestRepository;
         this.clientCredit = clientCredit;
     }
 
@@ -47,20 +51,20 @@ public class CreditController {
 
     @PostMapping
     public String getCredit(@RequestParam Currency currency) {
-        CreditBid creditBid = new CreditBid(client, currency);
-        creditBidRepository.save(creditBid);
+        ClientCreditRequest clientCreditRequest = new ClientCreditRequest(client, currency);
+        clientCreditRequestRepository.save(clientCreditRequest);
         return "redirect:/credit";
     }
 
     @PostMapping("/accept")
-    public String acceptCredit(@RequestParam CreditBid creditBid) {
-        clientCredit.creditAccept(creditBid);
+    public String acceptCredit(@RequestParam CreditOfferEntity creditOfferEntity) {
+        clientCredit.creditAccept(creditOfferEntity);
         return "redirect:/credit";
     }
 
     @PostMapping("/decline")
-    public String declineCredit(@RequestParam CreditBid creditBid) {
-        clientCredit.creditDecline(creditBid);
+    public String declineCredit(@RequestParam CreditOfferEntity creditOfferEntity) {
+        clientCredit.creditDecline(creditOfferEntity);
         return "redirect:/credit";
     }
 }

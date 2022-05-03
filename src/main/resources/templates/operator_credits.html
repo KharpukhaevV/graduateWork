@@ -30,27 +30,39 @@
                         <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>
-                    <tr th:each="creditBid : ${credits}">
-                        <form method="POST" action="/operator/offer">
-                            <td><a href="#" th:text="${creditBid.getClient()}"></a></td>
+                    <tr th:each="request : ${credits}">
+                        <form method="POST" action="/operator/offer" th:object="${creditOffer}">
                             <td>
-                                <input type="text" name="limit">
+                                <a href="#" th:text="${request.getClient()}"></a>
+                                <input type="hidden" name="client"  th:value="${request.getClient().getId()}">
                             </td>
                             <td>
-                                <input type="text" name="percent">
+                                <input type="text" name="limitCard" id="limit" th:field="*{limitCard}">
+                                <label for="limit" style="color: red;" th:if="${#fields.hasErrors('limitCard')}"
+                                       th:errors="*{limitCard}"></label>
                             </td>
                             <td>
-                                <input type="date" id="start" name="date" th:min="${currentDate}">
+                                <input type="text" name="percent" id="percent" th:field="*{percent}">
+                                <label for="percent" style="color: red;" th:if="${#fields.hasErrors('percent')}"
+                                       th:errors="*{percent}"></label>
                             </td>
-                            <td th:text="${creditBid.getCurrency()}"></td>
                             <td>
-                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <input type="date" id="start" name="expirationDate" th:field="*{expirationDate}" th:min="${currentDate}">
+                                <label for="start" style="color: red;" th:if="${#fields.hasErrors('expirationDate')}"
+                                       th:errors="*{expirationDate}"></label>
+                            </td>
+                            <td>
+                                <label th:text="${request.getCurrency()}"></label>
+                                <input type="hidden" name="currency" th:value="${request.getCurrency()}">
+                            </td>
+                            <td>
+                                <input type="hidden" name="request" th:value="${request.getId()}">
                                 <button type="submit" class="btn btn-sm btn-outline-success">Предложить</button>
                             </td>
                         </form>
                         <td>
                             <form method="POST" action="/operator/offer_decline">
-                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <input type="hidden" name="request" th:value="${request.getId()}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Отклонить</button>
                             </form>
                         </td>

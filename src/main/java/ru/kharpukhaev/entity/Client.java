@@ -49,7 +49,7 @@ public class Client implements UserDetails {
     private Set<TransferEntity> receiving;
 
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)
-    private Set<CreditBid> creditBids;
+    private Set<CreditOfferEntity> creditOfferEntities;
 
     private boolean active;
 
@@ -160,12 +160,12 @@ public class Client implements UserDetails {
         this.receiving = receiving;
     }
 
-    public Set<CreditBid> getCredits() {
-        return creditBids;
+    public Set<CreditOfferEntity> getCredits() {
+        return creditOfferEntities;
     }
 
-    public void setCredits(Set<CreditBid> creditBids) {
-        this.creditBids = creditBids;
+    public void setCredits(Set<CreditOfferEntity> creditOfferEntities) {
+        this.creditOfferEntities = creditOfferEntities;
     }
 
     public Set<Account> getAccounts() {

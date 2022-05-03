@@ -29,7 +29,9 @@ public class TransfersController {
     private final ClientRepository clientRepository;
     private Client client;
 
-    public TransfersController(TransferValidationService transferValidationService, TransferService transferService, ClientRepository clientRepository) {
+    public TransfersController(TransferValidationService transferValidationService,
+                               TransferService transferService,
+                               ClientRepository clientRepository) {
         this.transferValidationService = transferValidationService;
         this.transferService = transferService;
         this.clientRepository = clientRepository;

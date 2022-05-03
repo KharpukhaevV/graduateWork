@@ -51,7 +51,7 @@
                 <tr th:each="credit : ${credits}">
                     <td th:text="${credit.getCard().getAccount().getNumber()}"></td>
                     <td th:text="${credit.getSum()}"></td>
-                    <td th:text="${credit.getCard().getCreditBid().getPercent()}"></td>
+                    <td th:text="${credit.getCard().getCreditOffer().getPercent()}"></td>
                     <td th:text="${credit.getExpirationDate()}"></td>
                     <td th:text="${credit.getCreditStatus()}"></td>
                 </tr>
@@ -62,7 +62,7 @@
     <div class="row" style="margin-top: 50px">
         <div class="col">
             <div th:if="${not #lists.isEmpty(client.getCredits())}">
-                <h5>Активные заявки</h5>
+                <h5>Предложения по кредитам</h5>
                 <table class="table" style="margin-top: 40px">
                     <tr>
                         <th scope="col">Дата оформления</th>
@@ -74,22 +74,22 @@
                         <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>
-                    <tr th:each="creditBid : ${client.getCredits()}">
-                        <td th:text="${creditBid.getStartDate()}"></td>
-                        <td th:text="${creditBid.getExpirationDate()}"></td>
-                        <td th:text="${creditBid.getLimitCard()}"></td>
-                        <td th:text="${creditBid.getPercent()}"></td>
-                        <td th:text="${creditBid.getCurrency()}"></td>
-                        <td th:text="${creditBid.getStatus()}"></td>
-                        <td th:if="${status.equals(creditBid.getStatus())}">
+                    <tr th:each="creditOfferEntity : ${client.getCredits()}">
+                        <td th:text="${creditOfferEntity.getStartDate()}"></td>
+                        <td th:text="${creditOfferEntity.getExpirationDate()}"></td>
+                        <td th:text="${creditOfferEntity.getLimitCard()}"></td>
+                        <td th:text="${creditOfferEntity.getPercent()}"></td>
+                        <td th:text="${creditOfferEntity.getCurrency()}"></td>
+                        <td th:text="${creditOfferEntity.getStatus()}"></td>
+                        <td th:if="${status.equals(creditOfferEntity.getStatus())}">
                             <form method="POST" action="/credit/accept">
-                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <input type="hidden" name="creditOfferEntity" th:value="${creditOfferEntity.getId()}">
                                 <input type="submit" value="Принять" id="accept" class="btn btn-sm btn-outline-success">
                             </form>
                         </td>
-                        <td th:if="${status.equals(creditBid.getStatus())}">
+                        <td th:if="${status.equals(creditOfferEntity.getStatus())}">
                             <form method="POST" action="/credit/decline">
-                                <input type="hidden" name="creditBid" th:value="${creditBid.getId()}">
+                                <input type="hidden" name="creditOfferEntity" th:value="${creditOfferEntity.getId()}">
                                 <input type="submit" value="Отклонить" id="decline"
                                        class="btn btn-sm btn-outline-danger">
                             </form>
