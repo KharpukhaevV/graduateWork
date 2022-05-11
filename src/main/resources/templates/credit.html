@@ -19,17 +19,22 @@
     <div class="row" style="margin-top: 30px; text-align: center">
         <div class="col-4">
             <h5>Подать заявку на кредитную карту</h5>
-            <form method="POST" class="form-floating mb-2" style="margin-top: 10px" action="/credit">
+            <form method="POST" class="form-floating mb-2" style="margin-top: 10px" action="/credit"
+                  th:object="${creditRequest}">
                 <p>Срок, лимит и процент карты определяет оператор</p>
                 <p>Выберете валюту</p>
+                <p style="color: red;" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}"></p>
                 <div class="btn-group" style="width: 250px;">
-                    <input type="radio" class="btn-check" name="currency" id="option1" autocomplete="off" value="RUB"/>
+                    <input type="radio" class="btn-check" name="currency" th:field="*{currency}" id="option1"
+                           autocomplete="off" value="RUB"/>
                     <label class="btn btn-outline-success" for="option1">RUB</label>
 
-                    <input type="radio" class="btn-check" name="currency" id="option2" autocomplete="off" value="USD"/>
+                    <input type="radio" class="btn-check" name="currency" th:field="*{currency}" id="option2"
+                           autocomplete="off" value="USD"/>
                     <label class="btn btn-outline-success" for="option2">USD</label>
 
-                    <input type="radio" class="btn-check" name="currency" id="option3" autocomplete="off" value="EUR"/>
+                    <input type="radio" class="btn-check" name="currency" th:field="*{currency}" id="option3"
+                           autocomplete="off" value="EUR"/>
                     <label class="btn btn-outline-success" for="option3">EUR</label>
                 </div>
                 <button type="submit" class="btn btn-outline-primary" style="width: 250px; margin-top: 10px">Оформить

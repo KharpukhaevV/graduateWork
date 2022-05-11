@@ -19,7 +19,7 @@
         <div class="row" style="text-align: center;">
             <div class="col">
                 <h5 style="margin-bottom: 30px">Предложения по владам</h5>
-                <table class="table">
+                <table class="table" th:object="${contribution}">
                     <tr>
                         <th scope="col"></th>
                         <th scope="col">Ставка</th>
@@ -33,7 +33,7 @@
                         <th scope="col"></th>
                     </tr>
                     <tr th:each="a : ${all}">
-                        <form method="POST" action="/contribution/accept" th:object="${contribution}">
+                        <form method="POST" action="/contribution/accept">
                             <td th:text="${a.getName()}"></td>
                             <td>
                                 <label th:text="${a.getStake()}"></label>
@@ -49,29 +49,21 @@
                             </td>
                             <td>
                                 <input class="form-control" type="date" id="start" name="term" th:field="*{expirationDate}" th:min="${a.getTerm()}">
-                                <label style="color: red;" th:if="${#fields.hasErrors('expirationDate')}"
-                                       th:errors="*{expirationDate}"></label>
                             </td>
                             <td>
                                 <div th:if="${a.getCurrency()}">
                                     <input class="form-control" list="currency" name="currency" th:field="*{currency}" placeholder="Выберете валюту"/>
                                     <datalist id="currency">
-                                        <div th:each="curr : ${currency}">
-                                            <option th:value="${curr}">
-                                        </div>
+                                        <option th:each="curr : ${currency}" th:value="${curr}">
                                     </datalist>
                                 </div>
                                 <div th:if="${not a.getCurrency()}">
-                                    <input type="hidden"name="currency" th:value="'RUB'">
+                                    <input type="hidden" name="currency" th:value="'RUB'">
                                     <label>RUB</label>
                                 </div>
-                                <label style="color: red;" th:if="${#fields.hasErrors('currency')}"
-                                       th:errors="*{currency}"></label>
                             </td>
                             <td>
                                 <input class="form-control" type="text" name="sum" th:field="*{sum}" placeholder="Сумма вклада">
-                                <label style="color: red;" th:if="${#fields.hasErrors('sum')}"
-                                       th:errors="*{sum}"></label>
                             </td>
                             <td>
                                 <input class="form-control" list="account" name="accountNum" placeholder="Выберете счет"/>
@@ -89,11 +81,17 @@
                                 <input type="hidden" name="client" th:value="${client.getId()}">
                                 <button type="submit" class="btn btn-sm btn-outline-success">Оформить</button>
                             </td>
-                            <div th:if="${#fields.hasErrors('global')}">
-                                <p th:each="err : ${#fields.errors('global')}" th:text="${err}" style="color: red"></p>
-                            </div>
+
+
                         </form>
                     </tr>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('global')}">
+                        <p style="color: red;" th:if="${#fields.hasErrors('expirationDate')}"
+                           th:errors="*{expirationDate}"></p>
+                        <p style="color: red;" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}"></p>
+                        <p style="color: red;" th:if="${#fields.hasErrors('sum')}" th:errors="*{sum}"></p>
+                        <p th:each="err : ${#fields.errors('global')}" th:text="${err}" style="color: red"></p>
+                    </div>
                 </table>
             </div>
         </div>
@@ -145,6 +143,7 @@
         </div>
 
         <!-- Modal -->
+
         <div class="modal fade" id="modalTakeOf" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">

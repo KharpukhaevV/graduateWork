@@ -19,7 +19,7 @@ import ru.kharpukhaev.repository.ContributionsRepository;
 import ru.kharpukhaev.services.contribution.ContributionService;
 import ru.kharpukhaev.services.transfer.CurrencyConvertService;
 import ru.kharpukhaev.services.transfer.TransferService;
-import ru.kharpukhaev.services.validation.TransferValidationService;
+import ru.kharpukhaev.services.validation.ValidationService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -34,7 +34,7 @@ public class ContributionsController {
     private final ClientRepository clientRepository;
     private final AccountRepository accountRepository;
     private final TransferService transferService;
-    private final TransferValidationService transferValidationService;
+    private final ValidationService validationService;
     private final ContributionService contributionService;
     private final CurrencyConvertService currencyConvertService;
     private Client client;
@@ -44,7 +44,7 @@ public class ContributionsController {
                                    ClientRepository clientRepository,
                                    AccountRepository accountRepository,
                                    TransferService transferService,
-                                   TransferValidationService transferValidationService,
+                                   ValidationService validationService,
                                    ContributionService contributionService,
                                    CurrencyConvertService currencyConvertService) {
         this.contributionOfferRepository = contributionOfferRepository;
@@ -52,7 +52,7 @@ public class ContributionsController {
         this.clientRepository = clientRepository;
         this.accountRepository = accountRepository;
         this.transferService = transferService;
-        this.transferValidationService = transferValidationService;
+        this.validationService = validationService;
         this.contributionService = contributionService;
         this.currencyConvertService = currencyConvertService;
     }
@@ -66,7 +66,7 @@ public class ContributionsController {
         client = clientRepository.findByUsername(principal.getName());
         model.addAttribute("accounts", client.getCheckingAccounts());
         model.addAttribute("client", client);
-        model.addAttribute("currency", new Currency[] {Currency.EUR, Currency.USD});
+        model.addAttribute("currency", new Currency[]{Currency.EUR, Currency.USD});
         model.addAttribute("all", all);
         model.addAttribute("contributions", contributionsRepository.findAllByClient(client));
         return "contributions";
@@ -75,11 +75,12 @@ public class ContributionsController {
     @PostMapping("/accept")
     public String accept(@ModelAttribute("contribution") @Valid Contribution contribution, BindingResult bindingResult, @RequestParam String accountNum, Model model) {
         Account accountByNumber = accountRepository.findAccountByNumber(accountNum);
-        Long sumCurrency = currencyConvertService.checkCurrencyAndConvert(contribution.getCurrency(), accountByNumber.getCurrency(), contribution.getSum());
-        String err = transferValidationService.validateTransferSum(accountNum, sumCurrency);
-        if (!err.isEmpty()) {
-            ObjectError error = new ObjectError("globalError", err);
-            bindingResult.addError(error);
+        if (accountByNumber != null) {
+            Long sumCurrency = currencyConvertService.checkCurrencyAndConvert(contribution.getCurrency(), accountByNumber.getCurrency(), contribution.getSum());
+            validationService.validateTransferSum(accountNum, sumCurrency, bindingResult);
+        } else {
+            ObjectError errSum = new ObjectError("globalError", "Некоректный номер");
+            bindingResult.addError(errSum);
         }
         if (bindingResult.hasErrors()) {
             Iterable<ContributionOffer> all = contributionOfferRepository.findAll();
@@ -88,7 +89,7 @@ public class ContributionsController {
             }
             model.addAttribute("accounts", client.getCheckingAccounts());
             model.addAttribute("client", client);
-            model.addAttribute("currency", new Currency[] {Currency.EUR, Currency.USD});
+            model.addAttribute("currency", new Currency[]{Currency.EUR, Currency.USD});
             model.addAttribute("all", all);
             model.addAttribute("contributions", contributionsRepository.findAll());
             return "contributions";

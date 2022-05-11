@@ -5,8 +5,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kharpukhaev.entity.Account;
 import ru.kharpukhaev.entity.Contribution;
 import ru.kharpukhaev.entity.enums.AccountType;
+import ru.kharpukhaev.entity.enums.CardType;
 import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.ContributionsRepository;
+import ru.kharpukhaev.services.credit.CreditService;
 import ru.kharpukhaev.services.transfer.CurrencyConvertService;
 
 import java.time.LocalDate;
@@ -16,15 +18,17 @@ public class ContributionService {
 
     private final AccountRepository accountRepository;
     private final ContributionsRepository contributionsRepository;
-
     private final CurrencyConvertService currencyConvertService;
+    private final CreditService creditService;
 
     public ContributionService(AccountRepository accountRepository,
                                ContributionsRepository contributionsRepository,
-                               CurrencyConvertService currencyConvertService) {
+                               CurrencyConvertService currencyConvertService,
+                               CreditService creditService) {
         this.accountRepository = accountRepository;
         this.contributionsRepository = contributionsRepository;
         this.currencyConvertService = currencyConvertService;
+        this.creditService = creditService;
     }
 
     @Transactional
@@ -35,6 +39,9 @@ public class ContributionService {
         accountContribution.setCurrency(contribution.getCurrency());
 
         Long sumCurrency = currencyConvertService.checkCurrencyAndConvert(contribution.getCurrency(), accountSender.getCurrency(), contribution.getSum());
+        if (accountSender.getCard().getType().equals(CardType.CREDIT)) {
+            creditService.addCredit(sumCurrency, accountSender.getCard());
+        }
         accountSender.setBalance(accountSender.getBalance() - sumCurrency);
 
         accountContribution.setBalance(contribution.getSum());

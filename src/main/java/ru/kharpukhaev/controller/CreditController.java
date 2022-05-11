@@ -2,16 +2,13 @@ package ru.kharpukhaev.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.kharpukhaev.entity.Client;
 import ru.kharpukhaev.entity.ClientCreditRequest;
 import ru.kharpukhaev.entity.CreditEntity;
 import ru.kharpukhaev.entity.CreditOfferEntity;
 import ru.kharpukhaev.entity.enums.CreditBidStatus;
-import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.repository.ClientCreditRequestRepository;
 import ru.kharpukhaev.repository.ClientRepository;
 import ru.kharpukhaev.repository.CreditRepository;
@@ -40,7 +37,7 @@ public class CreditController {
     }
 
     @GetMapping
-    public String credit(Model model, Principal principal) {
+    public String credit(Model model, Principal principal, @ModelAttribute("creditRequest") ClientCreditRequest clientCreditRequest) {
         client = clientRepository.findByUsername(principal.getName());
         Iterable<CreditEntity> creditEntities = creditRepository.findAll();
         model.addAttribute("credits", creditEntities);
@@ -50,8 +47,16 @@ public class CreditController {
     }
 
     @PostMapping
-    public String getCredit(@RequestParam Currency currency) {
-        ClientCreditRequest clientCreditRequest = new ClientCreditRequest(client, currency);
+    public String getCredit(@ModelAttribute("creditRequest") ClientCreditRequest clientCreditRequest, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            Iterable<CreditEntity> creditEntities = creditRepository.findAll();
+            model.addAttribute("credits", creditEntities);
+            model.addAttribute("client", client);
+            model.addAttribute("status", CreditBidStatus.OFFERED);
+            return "credit";
+        }
+        clientCreditRequest.setClient(client);
+        clientCreditRequest.setStatus(CreditBidStatus.PROCESSED);
         clientCreditRequestRepository.save(clientCreditRequest);
         return "redirect:/credit";
     }

@@ -33,26 +33,26 @@
                         <tr th:each="transfer : ${transfers}">
                             <td th:text="${transfer.getDate()}"></td>
                             <td>
-                                <span th:text="${transfer.getAccountSender().getClient()}"></span>
+                                <span th:text="${transfer.getAccountSender()}"></span>
                                 <br>
-                                <span th:text="${transfer.getAccountSender().getNumber()}"></span>
+                                <span th:text="${transfer.getSender()}"></span>
                             </td>
                             <td>
-                                <span th:text="${transfer.getAccountRecipient().getClient()}"></span>
+                                <span th:text="${transfer.getAccountRecipient()}"></span>
                                 <br>
-                                <span th:text="${transfer.getAccountRecipient().getNumber()}"></span>
+                                <span th:text="${transfer.getRecipient()}"></span>
                             </td>
                             <td th:text="${transfer.getTransferSum()}"></td>
                             <td th:text="${transfer.getStatus()}"></td>
                             <td>
                                 <form method="POST" action="/operator/payments/accept">
-                                    <input type="hidden" name="transferService" th:value="${transfer.getId()}">
+                                    <input type="hidden" name="transfer" th:value="${transfer.getId()}">
                                     <button type="submit" class="btn btn-sm btn-outline-success">Подтвердить</button>
                                 </form>
                             </td>
                             <td>
                                 <form method="POST" action="/operator/payments/decline">
-                                    <input type="hidden" name="transferService" th:value="${transfer.getId()}">
+                                    <input type="hidden" name="transfer" th:value="${transfer.getId()}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Отклонить</button>
                                 </form>
                             </td>

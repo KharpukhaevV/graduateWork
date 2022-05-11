@@ -3,6 +3,7 @@ package ru.kharpukhaev.entity;
 import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -24,13 +25,13 @@ public class Contribution {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @NotNull
+    @NotNull(message = "Выберете валюту")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
     private String startDate;
 
-    @NotEmpty
+    @NotEmpty(message = "Выберете дату")
     private String expirationDate;
 
     private Double stake;
@@ -41,7 +42,8 @@ public class Contribution {
 
     private Boolean canBeClosed;
 
-    @NotNull
+    @Min(0)
+    @NotNull(message = "Укажите сумму")
     private Long sum;
 
     public Contribution() {

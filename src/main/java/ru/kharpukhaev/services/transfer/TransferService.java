@@ -37,11 +37,10 @@ public class TransferService {
     public void doTransfer(String senderNumber, String recipientNumber, Long sum) {
         Account sender = accountRepository.findAccountByNumber(senderNumber);
         Account recipient = accountRepository.findAccountByNumber(recipientNumber);
-        Long newSum = currencyConvertService.checkCurrencyAndConvert(sender.getCurrency(), recipient.getCurrency(), sum);
         if (sender.getNumber().substring(0, 6).equals(recipientNumber.substring(0, 6))) {
-            transferToClient(sender, recipient, newSum);
+            transferToClient(sender, recipient, sum);
         } else {
-            transferToOther(sender, recipient, newSum);
+            transferToOther(sender, recipient, sum);
         }
     }
 
@@ -50,9 +49,10 @@ public class TransferService {
         Account sender = accountRepository.findAccountByNumber(senderNumber);
         Account recipient = accountRepository.findAccountByNumber(recipientNumber);
         checkCredit(sender, sum);
+        Long newSum = currencyConvertService.checkCurrencyAndConvert(sender.getCurrency(), recipient.getCurrency(), sum);
         sender.setBalance(sender.getBalance() - sum);
-        recipient.setBalance(recipient.getBalance() + sum);
-        TransferEntity transferEntity = new TransferEntity(sender, recipient, sum);
+        recipient.setBalance(recipient.getBalance() + newSum);
+        TransferEntity transferEntity = new TransferEntity(sender, recipient, newSum);
         transferEntity.setStatus(TransferStatus.SUCCESS);
         accountRepository.save(recipient);
         accountRepository.save(sender);
@@ -60,13 +60,11 @@ public class TransferService {
     }
 
     private void transferToClient(Account sender, Account recipient, Long sum) {
-        if (sender.getCard().getType().equals(CardType.CREDIT)) {
-            creditService.addCredit(sum, sender.getCard());
-        }
-        TransferEntity transferEntity = new TransferEntity(sender, recipient, sum);
         checkCredit(sender, sum);
         sender.setBalance(sender.getBalance() - sum);
-        recipient.setBalance(recipient.getBalance() + sum);
+        Long newSum = currencyConvertService.checkCurrencyAndConvert(sender.getCurrency(), recipient.getCurrency(), sum);
+        recipient.setBalance(recipient.getBalance() + newSum);
+        TransferEntity transferEntity = new TransferEntity(sender, recipient, newSum);
         transferEntity.setStatus(TransferStatus.SUCCESS);
         transferRepository.save(transferEntity);
         accountRepository.save(sender);
@@ -76,15 +74,13 @@ public class TransferService {
 
     private void transferToOther(Account sender, Account recipient, Long sum) {
         long sumWithCommission = commissions.checkCommission(recipient, sum) + sum;
-        if (sender.getCard().getType().equals(CardType.CREDIT)) {
-            creditService.addCredit(sumWithCommission, sender.getCard());
-        }
-        TransferEntity transferEntity = new TransferEntity(sender, recipient, sum);
         checkCredit(sender, sum);
         sender.setBalance(sender.getBalance() - sumWithCommission);
+        TransferEntity transferEntity = new TransferEntity(sender, recipient, sum);
         accountRepository.save(sender);
         if (frodMonitor.monitor(transferEntity)) {
-            recipient.setBalance(recipient.getBalance() + sum);
+            Long newSum = currencyConvertService.checkCurrencyAndConvert(sender.getCurrency(), recipient.getCurrency(), sum);
+            recipient.setBalance(recipient.getBalance() + newSum);
             accountRepository.save(recipient);
         }
     }

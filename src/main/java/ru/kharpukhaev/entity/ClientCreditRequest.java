@@ -4,6 +4,7 @@ import ru.kharpukhaev.entity.enums.CreditBidStatus;
 import ru.kharpukhaev.entity.enums.Currency;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "credit_requests")
@@ -19,6 +20,7 @@ public class ClientCreditRequest {
     @JoinColumn(name = "client_id")
     private Client client;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
@@ -26,12 +28,6 @@ public class ClientCreditRequest {
     private CreditBidStatus status;
 
     public ClientCreditRequest() {
-    }
-
-    public ClientCreditRequest(Client client, Currency currency) {
-        this.client = client;
-        this.currency = currency;
-        this.status = CreditBidStatus.PROCESSED;
     }
 
     public Long getId() {

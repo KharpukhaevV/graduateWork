@@ -40,16 +40,6 @@ public class ContributionOffer {
     public ContributionOffer() {
     }
 
-    public ContributionOffer(String name, Double stake, Integer minTerm, Boolean takeOff, Boolean topUp, Boolean isCurrency, Boolean canBeClosed) {
-        this.name = name;
-        this.stake = stake;
-        this.minTerm = minTerm;
-        this.takeOff = takeOff;
-        this.topUp = topUp;
-        this.isCurrency = isCurrency;
-        this.canBeClosed = canBeClosed;
-    }
-
     public Long getId() {
         return id;
     }
