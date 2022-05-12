@@ -6,3 +6,8 @@ body {
 .card {
     border: 1px solid rgb(0 0 0);
 }
+
+.head {
+    text-align: center;
+    margin: 10px;
+}

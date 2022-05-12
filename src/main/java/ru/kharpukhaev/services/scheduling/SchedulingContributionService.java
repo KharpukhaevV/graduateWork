@@ -10,6 +10,8 @@ import ru.kharpukhaev.repository.ContributionsRepository;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+
 
 @Service
 public class SchedulingContributionService {
@@ -25,14 +27,20 @@ public class SchedulingContributionService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void paymentCalc() {
-        Iterable<Contribution> contributions = contributionsRepository.findAll();
-        for (Contribution contribution : contributions) {
-            LocalDate date = LocalDate.parse(contribution.getStartDate());
+        List<Contribution> contributions = (List<Contribution>) contributionsRepository.findAll();
+
+        LocalDate today = LocalDate.now();
+
+        List<Contribution> filteredContributions = contributions.stream()
+                .filter(p -> LocalDate.parse(p.getStartDate()).getDayOfMonth() == today.getDayOfMonth() |
+                        (LocalDate.parse(p.getStartDate()).getDayOfMonth() > today.with(lastDayOfMonth()).getDayOfMonth() &
+                                today.getDayOfMonth() == today.with(lastDayOfMonth()).getDayOfMonth()))
+                .toList();
+
+        for (Contribution contribution : filteredContributions) {
             Account account = contribution.getAccount();
-            if (date.getDayOfMonth() == LocalDate.now().getDayOfMonth()) {
-                account.setBalance((long) (account.getBalance() + (contribution.getSum() * contribution.getStake() / 100)));
-                accountRepository.save(account);
-            }
+            account.setBalance((long) (account.getBalance() + (account.getBalance() * contribution.getStake() / 100)));
+            accountRepository.save(account);
         }
     }
 

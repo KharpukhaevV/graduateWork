@@ -36,14 +36,15 @@ public class ContributionService {
         Account accountSender = accountRepository.findAccountByNumber(accountNum);
         Account accountContribution = new Account(AccountType.SAVINGS_ACCOUNT, contribution.getClient(), contribution.getCurrency());
 
-        accountContribution.setCurrency(contribution.getCurrency());
-
         Long sumCurrency = currencyConvertService.checkCurrencyAndConvert(contribution.getCurrency(), accountSender.getCurrency(), contribution.getSum());
-        if (accountSender.getCard().getType().equals(CardType.CREDIT)) {
-            creditService.addCredit(sumCurrency, accountSender.getCard());
-        }
-        accountSender.setBalance(accountSender.getBalance() - sumCurrency);
 
+        if (accountSender.getCard() != null) {
+            if (accountSender.getCard().getType().equals(CardType.CREDIT)) {
+                creditService.addCredit(sumCurrency, accountSender.getCard());
+            }
+        }
+
+        accountSender.setBalance(accountSender.getBalance() - sumCurrency);
         accountContribution.setBalance(contribution.getSum());
 
         contribution.setAccount(accountContribution);

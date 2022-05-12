@@ -11,12 +11,11 @@
 
     <div class="container">
         <nav th:replace="fragments/nav_bar :: navbar"></nav>
-        <hr>
-        <h4>Платежи ожидающие проверки</h4>
-        <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
-            <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
-        </form>
-        <hr>
+        <div class="head">
+            <hr>
+            <h4>Платежи ожидающие проверки</h4>
+            <hr>
+        </div>
         <div class="row">
             <div class="col">
                 <div th:if="${not #lists.isEmpty(transfers)}">

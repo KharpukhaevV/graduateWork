@@ -23,19 +23,19 @@ public class Client implements UserDetails {
     private Long id;
 
     @NotEmpty
-    @Size(min = 2, max = 16)
+    @Size(min = 2)
     private String username;
 
     @NotEmpty
-    @Size(min = 4, max = 16)
+    @Size(min = 4)
     private String password;
 
     @NotEmpty
-    @Size(min = 2, max = 16)
+    @Size(min = 2)
     private String firstname;
 
     @NotEmpty
-    @Size(min = 2, max = 16)
+    @Size(min = 2)
     private String lastname;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)

@@ -58,13 +58,12 @@ public class ContributionsController {
     }
 
     @GetMapping
-    public String contributions(Principal principal, Model model, @ModelAttribute("contribution") Contribution contribution1) {
+    public String contributions(Principal principal, Model model, @ModelAttribute("contribution") Contribution contribution) {
         Iterable<ContributionOffer> all = contributionOfferRepository.findAll();
         for (ContributionOffer a : all) {
             a.setTerm(LocalDate.now().plusMonths(a.getMinTerm()));
         }
         client = clientRepository.findByUsername(principal.getName());
-        model.addAttribute("accounts", client.getCheckingAccounts());
         model.addAttribute("client", client);
         model.addAttribute("currency", new Currency[]{Currency.EUR, Currency.USD});
         model.addAttribute("all", all);
@@ -87,7 +86,6 @@ public class ContributionsController {
             for (ContributionOffer a : all) {
                 a.setTerm(LocalDate.now().plusMonths(a.getMinTerm()));
             }
-            model.addAttribute("accounts", client.getCheckingAccounts());
             model.addAttribute("client", client);
             model.addAttribute("currency", new Currency[]{Currency.EUR, Currency.USD});
             model.addAttribute("all", all);

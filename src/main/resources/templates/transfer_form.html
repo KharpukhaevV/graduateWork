@@ -10,12 +10,11 @@
 <body>
 <div class="container">
     <nav th:replace="fragments/nav_bar :: navbar"></nav>
-    <hr>
-    <h4>Платежи</h4>
-    <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
-        <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
-    </form>
-    <hr>
+    <div class="head">
+        <hr>
+        <h4>Платежи</h4>
+        <hr>
+    </div>
     <div class="row" th:if="${#httpServletRequest.requestURI == '/transfer/do_transfer'}">
         <form method="POST" class="form-floating" th:action="@{/transfer/do_transfer}" th:object="${transfer}">
             <div class="col-12">
@@ -31,7 +30,7 @@
                                th:for="${iter}">
                             <span th:text="${account.getNumber()}"></span>
                             <br>
-                            <span th:text="'Баланс: ' + ${account.getBalance()}"></span>
+                            <span th:text="'Баланс: ' + ${account.getBalance()} + ${account.getCurrency()}"></span>
                         </label>
                     </div>
                 </div>
@@ -71,13 +70,13 @@
                     <label style="width: 210px;" class="btn btn-outline-success" th:for="${'s' + iter}">
                         <span th:text="${account.getNumber()}"></span>
                         <br>
-                        <span th:text="'Баланс: ' + ${account.getBalance()}"></span>
+                        <span th:text="'Баланс: ' + ${account.getBalance()} + ${account.getCurrency()}"></span>
                     </label>
                 </div>
             </div>
             <div class="col-12">
                 <p>Выберете ваш счет для получения</p>
-                <p style="color: red;" th:if="${#fields.hasErrors('accountSender')}"
+                <p style="color: red;" th:if="${#fields.hasErrors('accountRecipient')}"
                    th:errors="*{accountRecipient}"></p>
                 <div class="btn-group" role="group" th:each="account, iter : ${client.getCheckingAccounts()}">
                     <input type="radio" class="btn-check" th:field="*{accountRecipient}" th:id="${'r' + iter}"
@@ -86,7 +85,7 @@
                     <label style="width: 210px;" class="btn btn-outline-success" th:for="${'r' + iter}">
                         <span th:text="${account.getNumber()}"></span>
                         <br>
-                        <span th:text="'Баланс: ' + ${account.getBalance()}"></span>
+                        <span th:text="'Баланс: ' + ${account.getBalance()} + ${account.getCurrency()}"></span>
                     </label>
                 </div>
             </div>

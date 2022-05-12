@@ -10,12 +10,11 @@
 
     <div class="container">
         <nav th:replace="fragments/nav_bar :: navbar"></nav>
-        <hr>
-        <h4>Вклады</h4>
-        <form method="GET" action="/profile" style="margin-top: 5px; margin-bottom: 5px">
-            <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
-        </form>
-        <hr>
+        <div class="head">
+            <hr>
+            <h4>Вклады</h4>
+            <hr>
+        </div>
         <div class="row" style="text-align: center;">
             <div class="col">
                 <h5 style="margin-bottom: 30px">Предложения по владам</h5>
@@ -68,7 +67,7 @@
                             <td>
                                 <input class="form-control" list="account" name="accountNum" placeholder="Выберете счет"/>
                                 <datalist id="account">
-                                    <div th:each="account : ${accounts}">
+                                    <div th:each="account : ${client.getCheckingAccounts()}">
                                         <option th:value="${account.getNumber()}">
                                     </div>
                                 </datalist>
@@ -155,7 +154,7 @@
                             <label for="sender">Выберете счет: </label>
                             <input id="sender" class="form-control" list="acc" name="accountRecipient" placeholder="Счет" style="margin-bottom: 10px; margin-top: 10px"/>
                             <datalist id="acc">
-                                <div th:each="account : ${accounts}">
+                                <div th:each="account : ${client.getCheckingAccounts()}">
                                     <option th:value="${account.getNumber()}">
                                 </div>
                             </datalist>
@@ -183,7 +182,7 @@
                             <label for="sender">Выберете счет: </label>
                             <input id="sender" class="form-control" list="acc" name="accountSender" placeholder="Счет" style="margin-bottom: 10px; margin-top: 10px"/>
                             <datalist id="acc">
-                                <div th:each="account : ${accounts}">
+                                <div th:each="account : ${client.getCheckingAccounts()}">
                                     <option th:value="${account.getNumber()}">
                                 </div>
                             </datalist>

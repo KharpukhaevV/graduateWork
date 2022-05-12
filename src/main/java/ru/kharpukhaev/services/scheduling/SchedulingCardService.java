@@ -33,18 +33,15 @@ public class SchedulingCardService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void closeCards() {
-        Iterable<Card> cards = cardRepository.findAll();
+        Iterable<Card> cards = cardRepository.findAllByExpirationDateAndType(LocalDate.now().minusDays(1), CardType.CREDIT);
+        System.out.println(LocalDate.now().minusDays(1));
         for (Card card : cards) {
-            if (card.getExpirationDate().isBefore(LocalDate.now())) {
-                if (card.getType().equals(CardType.CREDIT)) {
-                    List<CreditEntity> overdueCredits = creditRepository.findAllByCardAndCreditStatus(card, CreditStatus.OVERDUE);
-                    if (overdueCredits.isEmpty()) {
-                        Client client = card.getClient();
-                        client.getCards().remove(card);
-                        clientRepository.save(client);
-                        cardRepository.delete(card);
-                    }
-                }
+            List<CreditEntity> overdueCredits = creditRepository.findAllByCardAndCreditStatus(card, CreditStatus.OVERDUE);
+            if (overdueCredits.isEmpty()) {
+                Client client = card.getClient();
+                client.getCards().remove(card);
+                clientRepository.save(client);
+                cardRepository.delete(card);
             }
         }
     }

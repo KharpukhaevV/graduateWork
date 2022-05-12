@@ -6,26 +6,26 @@ import ru.kharpukhaev.entity.enums.Currency;
 @Service
 public class CurrencyConvertService {
 
-    public Long checkCurrencyAndConvert(Currency currency1, Currency currency2, Long sum) {
-        if (currency1.equals(currency2)) {
+    public Long checkCurrencyAndConvert(Currency currencySender, Currency currencyRecipient, Long sum) {
+        if (currencySender.equals(currencyRecipient)) {
             return sum;
         } else {
-            if (currency1.equals(Currency.RUB) && currency2.equals(Currency.USD)) {
+            if (currencySender.equals(Currency.RUB) && currencyRecipient.equals(Currency.USD)) {
                return rubToUsd(sum);
             }
-            if (currency1.equals(Currency.RUB) && currency2.equals(Currency.EUR)) {
+            if (currencySender.equals(Currency.RUB) && currencyRecipient.equals(Currency.EUR)) {
                 return rubToEur(sum);
             }
-            if (currency1.equals(Currency.USD) && currency2.equals(Currency.RUB)) {
+            if (currencySender.equals(Currency.USD) && currencyRecipient.equals(Currency.RUB)) {
                 return usdToRub(sum);
             }
-            if (currency1.equals(Currency.USD) && currency2.equals(Currency.EUR)) {
+            if (currencySender.equals(Currency.USD) && currencyRecipient.equals(Currency.EUR)) {
                 return usdToEur(sum);
             }
-            if (currency1.equals(Currency.EUR) && currency2.equals(Currency.USD)) {
+            if (currencySender.equals(Currency.EUR) && currencyRecipient.equals(Currency.USD)) {
                 return eurToUsd(sum);
             }
-            if (currency1.equals(Currency.EUR) && currency2.equals(Currency.RUB)) {
+            if (currencySender.equals(Currency.EUR) && currencyRecipient.equals(Currency.RUB)) {
                 return eurToRub(sum);
             }
         }

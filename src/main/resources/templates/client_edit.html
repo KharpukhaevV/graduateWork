@@ -11,11 +11,11 @@
 
 <div class="container">
     <nav th:replace="fragments/nav_bar :: navbar"></nav>
-    <hr>
-    <form method="GET" action="/admin" style="margin-top: 5px; margin-bottom: 5px">
-        <button type="submit" class="btn btn-sm btn-outline-primary">Назад</button>
-    </form>
-    <hr>
+    <div class="head">
+        <hr>
+        <h4>Выберете роли</h4>
+        <hr>
+    </div>
     <div class="row">
         <div class="col-6">
             <form action="/admin/edit" method="POST" class="form-floating" style="text-align: left">

@@ -60,7 +60,7 @@ public class OperatorCheck {
         creditOfferRepository.save(creditOfferEntity);
     }
 
-    public void decline(ClientCreditRequest request) {
+    public void declineCreditRequest(ClientCreditRequest request) {
         clientCreditRequestRepository.delete(request);
     }
 }

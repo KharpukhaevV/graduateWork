@@ -88,7 +88,7 @@ public class OperatorController {
 
     @PostMapping("/offer_decline")
     public String declineOffer(@RequestParam ClientCreditRequest request) {
-        operatorCheck.decline(request);
+        operatorCheck.declineCreditRequest(request);
         return "redirect:/operator/credits";
     }
 

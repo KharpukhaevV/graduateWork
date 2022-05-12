@@ -1,5 +1,6 @@
 package ru.kharpukhaev.controller;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,6 +54,7 @@ public class MainController {
         if (bindingResult.hasErrors() | clientFromDB != null) {
             return "registration";
         }
+        client.setPassword(new BCryptPasswordEncoder().encode(client.getPassword()));
         client.setActive(true);
         client.setRoles(Collections.singleton(Role.USER));
         clientRepository.save(client);
