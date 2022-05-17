@@ -21,9 +21,9 @@
                     <tr>
                         <th scope="col">Название</th>
                         <th scope="col">Ставка</th>
+                        <th scope="col">Минимальный срок (месяцев)</th>
                         <th scope="col">Возможность снятия</th>
                         <th scope="col">Возможность пополнения</th>
-                        <th scope="col">Минимальный срок (месяцев)</th>
                         <th scope="col">Валюта</th>
                         <th scope="col">Закрыть досрочно</th>
                         <th scope="col"></th>
@@ -32,9 +32,9 @@
                         <form method="POST" action="/operator/delete">
                             <td th:text="${a.getName()}"></td>
                             <td th:text="${a.getStake()}"></td>
+                            <td th:text="${a.getMinTerm()}"></td>
                             <td th:text="${a.getTakeOff()}"></td>
                             <td th:text="${a.getTopUp()}"></td>
-                            <td th:text="${a.getMinTerm()}"></td>
                             <td th:text="${a.getCurrency()}"></td>
                             <td th:text="${a.getCanBeClosed()}"></td>
                             <td>
@@ -56,12 +56,20 @@
                                        th:errors="*{stake}"></label>
                             </td>
                             <td>
+                                <input class="form-control" type="text" th:field="*{minTerm}"
+                                       placeholder="Минимальный срок">
+                                <label style="color: red;" th:if="${#fields.hasErrors('minTerm')}"
+                                       th:errors="*{minTerm}"></label>
+                            </td>
+                            <td>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{takeOff}" id="takeOffTrue" autocomplete="off" th:value="${true}"/>
+                                    <input class="form-check-input" type="radio" th:field="*{takeOff}" id="takeOffTrue"
+                                           autocomplete="off" th:value="${true}"/>
                                     <label class="form-check-label" for="takeOffTrue">Да</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{takeOff}" id="takeOffFalse" autocomplete="off" th:value="${false}"/>
+                                    <input class="form-check-input" type="radio" th:field="*{takeOff}" id="takeOffFalse"
+                                           autocomplete="off" th:value="${false}"/>
                                     <label class="form-check-label" for="takeOffFalse">Нет</label>
                                 </div>
                                 <label style="color: red;" th:if="${#fields.hasErrors('takeOff')}"
@@ -78,11 +86,6 @@
                                 </div>
                                 <label style="color: red;" th:if="${#fields.hasErrors('topUp')}"
                                        th:errors="*{topUp}"></label>
-                            </td>
-                            <td>
-                                <input class="form-control" type="text" th:field="*{minTerm}" placeholder="Минимальный срок">
-                                <label style="color: red;" th:if="${#fields.hasErrors('minTerm')}"
-                                       th:errors="*{minTerm}"></label>
                             </td>
                             <td>
                                 <div class="form-check">

@@ -7,12 +7,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.kharpukhaev.entity.Account;
 import ru.kharpukhaev.entity.Card;
 import ru.kharpukhaev.entity.Client;
-import ru.kharpukhaev.entity.enums.AccountType;
 import ru.kharpukhaev.entity.enums.CardType;
-import ru.kharpukhaev.entity.enums.Currency;
 import ru.kharpukhaev.entity.enums.Role;
 import ru.kharpukhaev.repository.AccountRepository;
 import ru.kharpukhaev.repository.CardRepository;
@@ -73,15 +70,6 @@ public class MainController {
     public String addCard() {
         Card card = new Card(CardType.DEBIT, client);
         cardRepository.save(card);
-        return "redirect:/profile";
-    }
-
-    @GetMapping("/add_account")
-    public String addAccount() {
-        Account account = new Account(AccountType.CHECKING_ACCOUNT, client, Currency.RUB);
-        Account account2 = new Account(AccountType.SAVINGS_ACCOUNT, client, Currency.RUB);
-        accountRepository.save(account);
-        accountRepository.save(account2);
         return "redirect:/profile";
     }
 

@@ -24,11 +24,11 @@
                         <th scope="col">Ставка</th>
                         <th scope="col">Возможность снятия</th>
                         <th scope="col">Возможность пополнения</th>
+                        <th scope="col">Закрыть досрочно</th>
                         <th scope="col">Срок</th>
                         <th scope="col">Валюта</th>
                         <th scope="col">Сумма</th>
                         <th scope="col">Счет</th>
-                        <th scope="col">Закрыть досрочно</th>
                         <th scope="col"></th>
                     </tr>
                     <tr th:each="a : ${all}">
@@ -47,11 +47,17 @@
                                 <input type="hidden" name="takeUp" th:value="${a.getTopUp()}">
                             </td>
                             <td>
-                                <input class="form-control" type="date" id="start" name="term" th:field="*{expirationDate}" th:min="${a.getTerm()}">
+                                <label th:text="${a.getCanBeClosed()}"></label>
+                                <input type="hidden" name="canBeClosed" th:value="${a.getCanBeClosed()}">
+                            </td>
+                            <td>
+                                <input class="form-control" type="date" id="start" name="term"
+                                       th:field="*{expirationDate}" th:min="${a.getTerm()}">
                             </td>
                             <td>
                                 <div th:if="${a.getCurrency()}">
-                                    <input class="form-control" list="currency" name="currency" th:field="*{currency}" placeholder="Выберете валюту"/>
+                                    <input class="form-control" list="currency" name="currency" th:field="*{currency}"
+                                           placeholder="Выберете валюту"/>
                                     <datalist id="currency">
                                         <option th:each="curr : ${currency}" th:value="${curr}">
                                     </datalist>
@@ -71,10 +77,6 @@
                                         <option th:value="${account.getNumber()}">
                                     </div>
                                 </datalist>
-                            </td>
-                            <td>
-                                <label th:text="${a.getCanBeClosed()}"></label>
-                                <input type="hidden" name="canBeClosed" th:value="${a.getCanBeClosed()}">
                             </td>
                             <td>
                                 <input type="hidden" name="client" th:value="${client.getId()}">
@@ -106,6 +108,7 @@
                         <th scope="col">Ставка</th>
                         <th scope="col">Сумма вклада</th>
                         <th scope="col">Баланс счета</th>
+                        <th scope="col">Валюта</th>
                         <th scope="col">Можно пополнить</th>
                         <th scope="col">Можно снять</th>
                         <th scope="col">Закрыть</th>
@@ -117,6 +120,7 @@
                         <td th:text="${con.getStake()}"></td>
                         <td th:text="${con.getSum()}"></td>
                         <td th:text="${con.getAccount().getBalance()}"></td>
+                        <td th:text="${con.getCurrency()}"></td>
                         <td th:if="${con.getTakeUp() == true}">
                             <button th:id="${con.getAccount().getId()}" type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#modalTakeUp">
                                 Пополнить

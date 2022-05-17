@@ -53,6 +53,9 @@ public class Client implements UserDetails {
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)
     private Set<CreditOfferEntity> creditOfferEntities;
 
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "client", orphanRemoval = true)
+    private Set<Contribution> contributions;
+
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -176,6 +179,14 @@ public class Client implements UserDetails {
 
     public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public Set<Contribution> getContributions() {
+        return contributions;
+    }
+
+    public void setContributions(Set<Contribution> contributions) {
+        this.contributions = contributions;
     }
 
     public List<Account> getCheckingAccounts() {

@@ -59,15 +59,15 @@ public class ContributionsController {
 
     @GetMapping
     public String contributions(Principal principal, Model model, @ModelAttribute("contribution") Contribution contribution) {
-        Iterable<ContributionOffer> all = contributionOfferRepository.findAll();
-        for (ContributionOffer a : all) {
+        Iterable<ContributionOffer> allOffers = contributionOfferRepository.findAll();
+        for (ContributionOffer a : allOffers) {
             a.setTerm(LocalDate.now().plusMonths(a.getMinTerm()));
         }
         client = clientRepository.findByUsername(principal.getName());
         model.addAttribute("client", client);
         model.addAttribute("currency", new Currency[]{Currency.EUR, Currency.USD});
-        model.addAttribute("all", all);
-        model.addAttribute("contributions", contributionsRepository.findAllByClient(client));
+        model.addAttribute("all", allOffers);
+        model.addAttribute("contributions", client.getContributions());
         return "contributions";
     }
 
@@ -78,18 +78,18 @@ public class ContributionsController {
             Long sumCurrency = currencyConvertService.checkCurrencyAndConvert(contribution.getCurrency(), accountByNumber.getCurrency(), contribution.getSum());
             validationService.validateTransferSum(accountNum, sumCurrency, bindingResult);
         } else {
-            ObjectError errSum = new ObjectError("globalError", "Некоректный номер");
+            ObjectError errSum = new ObjectError("globalError", "Некорректный номер");
             bindingResult.addError(errSum);
         }
         if (bindingResult.hasErrors()) {
-            Iterable<ContributionOffer> all = contributionOfferRepository.findAll();
-            for (ContributionOffer a : all) {
+            Iterable<ContributionOffer> allOffers = contributionOfferRepository.findAll();
+            for (ContributionOffer a : allOffers) {
                 a.setTerm(LocalDate.now().plusMonths(a.getMinTerm()));
             }
             model.addAttribute("client", client);
             model.addAttribute("currency", new Currency[]{Currency.EUR, Currency.USD});
-            model.addAttribute("all", all);
-            model.addAttribute("contributions", contributionsRepository.findAll());
+            model.addAttribute("all", allOffers);
+            model.addAttribute("contributions", client.getContributions());
             return "contributions";
         }
         contributionService.openContribution(contribution, accountNum);
@@ -106,7 +106,7 @@ public class ContributionsController {
     }
 
     @PostMapping("/takeUp")
-    public String accountTakeUf(@RequestParam String accountSender, @RequestParam Long sum, @RequestParam Account accountRecipient) {
+    public String accountTakeUp(@RequestParam String accountSender, @RequestParam Long sum, @RequestParam Account accountRecipient) {
         if (accountRecipient.getContribution().getTakeUp()) {
             transferService.transferBetweenTheir(accountSender, accountRecipient.getNumber(), sum);
             return "redirect:/contribution";
